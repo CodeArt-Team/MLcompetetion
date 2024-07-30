@@ -64,27 +64,39 @@ def MLLibraryInstalls():
             import matplotlib.pyplot as plt
         except ImportError:
             print("Failed to import matplotlib modules after installation")
+            
+    # Seaborn 없으면 Seaborn 설치
+    try:
+        import seaborn
+    except ImportError:
+        print("Installing sklearn")
+        install('seaborn')
+    finally:
+        try:
+            import seaborn
+        except ImportError:
+            print("Failed to import matplotlib modules after installation")
 ### 필요한 library package install 
 MLLibraryInstalls()
 
 try:
-    import pandas as pd
-    import numpy as np
-    # import matplotlib.pyplot as plt
-    import os
+    import pandas as pd,numpy as np ## pandas, numpy 
+    import matplotlib.pyplot as plt,seaborn as sns  # 시각화
+    import warnings; warnings.filterwarnings('ignore')  # 경고 무시
+    import sys,os # file directory access
+    from pprint import pprint 
+
+
 
     from sklearn.tree import DecisionTreeRegressor
     from sklearn.metrics import mean_squared_error, r2_score
+    
 
     print("필요한 라이브러리 설치 및 임포트 완료")
 except ImportError as e:
     print(f"필요한 라이브러리 임포트에 실패했습니다: {e}")
 
-import pandas as pd,numpy as np ## pandas, numpy 
-import matplotlib.pyplot as plt,seaborn as sns  # 시각화
-import warnings; warnings.filterwarnings('ignore')  # 경고 무시
-import sys,os
-from pprint import pprint 
+
 
 
 # 기본 세팅
@@ -125,5 +137,39 @@ def red(str):return colored_text(str,'red')
 def green(str):return colored_text(str,'green')
 
 ### output data Fetching 
+print(yellow("🔹 Data preprocessing ---"))
 
 
+print(yellow(os.getcwd()))
+
+## input Filer read 
+input_b=pd.read_csv(os.path.join(os.getcwd(),"BerryMachineLearning/Data/environmentsB.csv"))
+input_c=pd.read_csv(os.path.join(os.getcwd(),"BerryMachineLearning/Data/environmentsC.csv"))
+input_d=pd.read_csv(os.path.join(os.getcwd(),"BerryMachineLearning/Data/environmentsD.csv"))
+input_e=pd.read_csv(os.path.join(os.getcwd(),"BerryMachineLearning/Data/environmentsE.csv"))
+
+output=pd.read_excel(os.path.join(os.getcwd(),"BerryMachineLearning/Data/사전테스트-생육데이터.xlsx"))
+print(output.tail())
+print(input_b.tail())
+
+
+pivoted = pd.pivot_table(output, 
+                        values='조사항목값', 
+                        index=['시설아이디','생육주사', '조사일자', '표본번호'], 
+                        columns='조사항목', 
+                        aggfunc='first')
+
+# 인덱스를 리셋합니다
+pivoted = pivoted.reset_index()
+pivoted.head()
+data = pivoted
+plt.rcParams['font.family'] = 'AppleGothic'  # 맥OS의 경우
+plt.rcParams['axes.unicode_minus'] = False 
+plt.plot([1,2,3],[1,2,3])
+# df = pd.DataFrame(data)
+# df['조사일자'] = pd.to_datetime(df['조사일자'], format='%Y%m%d')
+# 시각화할 컬럼 선택
+print(data)
+
+
+plt.show()
