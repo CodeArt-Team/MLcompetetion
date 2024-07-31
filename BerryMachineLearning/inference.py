@@ -147,16 +147,64 @@ import time
 
 class ReadInputOutput:
     @staticmethod
+    def make_DayToWeek(dataB, dataC, dataD, dataE):
+        from datetime import datetime, timedelta
+
+        ## datetime date, time 분리
+        datalist = [dataB, dataC, dataD, dataE]
+
+        ## datetime을 date로 변경 
+        for data in datalist:
+            data['datetime'] = pd.to_datetime(data['datetime'])
+            data['date'] = data['datetime'].dt.date
+            data['time'] = data['datetime'].dt.hour
+        
+
+        base_dateB = datetime(2023, 10, 6)
+        base_dateC = datetime(2023, 9, 22)  
+        base_dateD = datetime(2023, 10, 18)  
+        base_dateE = datetime(2023, 9, 22)  
+
+        base_weekB = 4
+        base_weekC = 1
+        base_weekD = 4
+        base_weekE = 1
+
+        # 주차 계산 함수
+        def calculate_week(date, base_date, base_week):
+            base_date_timestamp = pd.Timestamp(base_date)
+
+            # 날짜 차이 계산
+            delta_days = (date - base_date_timestamp).dt.days
+
+            # 기준 주차에서 날짜 차이를 주 단위로 변환
+            week = base_week + delta_days // 7
+            return week
+
+
+        datesB = pd.to_datetime(dataB['date']) 
+        datesC = pd.to_datetime(dataC['date']) 
+        datesD = pd.to_datetime(dataD['date']) 
+        datesE = pd.to_datetime(dataE['date']) 
+
+        weeksB = calculate_week(datesB, base_dateB, base_weekB)
+        weeksC = calculate_week(datesC, base_dateC, base_weekC)
+        weeksD = calculate_week(datesD, base_dateD, base_weekD)
+        weeksE = calculate_week(datesE, base_dateE, base_weekE)
+
+        dataB['weeks'] = weeksB
+        dataC['weeks'] = weeksC
+        dataD['weeks'] = weeksD
+        dataE['weeks'] = weeksE
+
+        dataB.head()
+
+
+    
+    
+    
+    @staticmethod
     def main():
-        print("\n")
-        print("1. 입력한 파라미터인 이미지 경로(--path)에서 이미지들을 차례대로 읽어옵니다.")
-        print("2. 키보드에서 'n'을 누르면(next 약자) 다음 이미지로 넘어갑니다. 이 때, 작업한 점의 좌표가 저장 됩니다.")
-        print("3. 키보드에서 'b'를 누르면(back 약자) 직전에 입력한 좌표를 취소합니다.")
-        print("4. 이미지 경로에 존재하는 모든 이미지에 작업을 마친 경우 또는 'q'를 누르면(quit 약자) 프로그램이 종료됩니다.")
-        print("5. '+' 또는 '='로 확대, '-' 또는 '_'로 축소, 'r'로 리셋할 수 있습니다.")
-        print("6. 마우스 오른쪽 버튼을 누른 채로 드래그하여 이미지를 이동할 수 있습니다.")
-        print("\n")
-        print("출력 포맷 : 이미지명,점의갯수,y1,x1,y2,x2,...")
         print("\n")
         print(green("1.환경데이터가 존재하는 폴더의 경로를 입력해주세요 :\n"))
         input_env_data_folder_path  = str(sys.stdin.readline().rstrip())
@@ -189,7 +237,8 @@ class ReadInputOutput:
         
         ### output data Fetching 
         print(yellow("🔹 Data preprocessing Start--->"))
-        print(yellow(os.getcwd()))
+        ReadInputOutput.make_DayToWeek(input_b, input_c, input_d, input_e)
+        print(" ---a")
 
 
 # print(output.tail())
@@ -204,16 +253,6 @@ print(f"{end - start:.5f} sec")
 
 
 
-pivoted = pd.pivot_table(output, 
-                        values='조사항목값', 
-                        index=['시설아이디','생육주사', '조사일자', '표본번호'], 
-                        columns='조사항목', 
-                        aggfunc='first')
-
-# 인덱스를 리셋합니다
-pivoted = pivoted.reset_index()
-pivoted.head()
-data = pivoted
 
 
 
