@@ -1,31 +1,27 @@
 """
     🔸 Team : 가나다라마바사 팀
     🔸 Date : 2024.07.30 
+    🔸 Requirement : 
+        Requirement : 
+        Scikit-Learn 1.2.2
+        XGBoost 2.0.3
     🔸 Description: 사전테스트 제출 파일 
     🔸 구동방식 
-        1. 환경데이터가 있는 폴더의 경로를 command 에 넣습니다. . 
-        2. 생육데이터가 있는 폴더의 경로를 command 에 작성합니다. 
+        1. 환경데이터가 있는 폴더의 절대 경로를 command 에 작성합니다. 
+        2. 생육데이터가 있는 폴더의 절대 경로를 command 에 작성합니다. 
     
 """
-
-
-
-
 ## 머신러닝을 위한 라이브러리  패키지 설치 
 def MLLibraryInstalls():
     import subprocess
     import sys
     import warnings
     warnings.filterwarnings('ignore')
-    
-
-
     def install(package):
         try:
             subprocess.check_call([sys.executable, "-m", "pip", "install", package])
         except subprocess.CalledProcessError as e:
             print(f"Error installing {package}: {e}")
-    
     # pandas 없으면 pandas 설치
     try:
         import pandas
@@ -37,7 +33,6 @@ def MLLibraryInstalls():
             import pandas as pd
         except ImportError:
             print("Failed to import pandas after installation")
-
     # numpy 없으면 numpy 설치
     try:
         import numpy
@@ -49,7 +44,6 @@ def MLLibraryInstalls():
             import numpy as np
         except ImportError:
             print("Failed to import numpy after installation")
-
     # sklearn 없으면 sklearn 설치
     try:
         import sklearn
@@ -86,8 +80,7 @@ def MLLibraryInstalls():
         except ImportError:
             print("Failed to import matplotlib modules after installation")
 ### 필요한 library package install 
-MLLibraryInstalls()
-
+# MLLibraryInstalls()
 try:
     import pandas as pd,numpy as np ## pandas, numpy 
     import matplotlib.pyplot as plt,seaborn as sns  # 시각화
@@ -104,7 +97,6 @@ try:
     import xgboost; print("XGBoost", xgboost.__version__)
 except ImportError as e:
     print(f"필요한 라이브러리 임포트에 실패했습니다: {e}")
-
 # 기본 세팅
 def colored_text(text, color='default', bold=False):
         '''
@@ -141,39 +133,33 @@ def blue(str):return colored_text(str,'blue')
 def yellow(str):return colored_text(str,'yellow')
 def red(str):return colored_text(str,'red')
 def green(str):return colored_text(str,'green')
-import math
-import time
+
 
 
 class ReadInputOutput:
     @staticmethod
     def make_DayToWeek(dataB, dataC, dataD, dataE):
         from datetime import datetime, timedelta
-
         ## datetime date, time 분리
         datalist = [dataB, dataC, dataD, dataE]
-
         ## datetime을 date로 변경 
         for data in datalist:
             data['datetime'] = pd.to_datetime(data['datetime'])
             data['date'] = data['datetime'].dt.date
             data['time'] = data['datetime'].dt.hour
         
-
         base_dateB = datetime(2023, 10, 6)
         base_dateC = datetime(2023, 9, 22)  
         base_dateD = datetime(2023, 10, 18)  
         base_dateE = datetime(2023, 9, 22)  
-
+        
         base_weekB = 4
         base_weekC = 1
         base_weekD = 4
         base_weekE = 1
-
         # 주차 계산 함수
         def calculate_week(date, base_date, base_week):
             base_date_timestamp = pd.Timestamp(base_date)
-
             # 날짜 차이 계산
             delta_days = (date - base_date_timestamp).dt.days
 
@@ -196,12 +182,6 @@ class ReadInputOutput:
         dataC['weeks'] = weeksC
         dataD['weeks'] = weeksD
         dataE['weeks'] = weeksE
-
-        dataB.head()
-
-
-    
-    
     
     @staticmethod
     def main():
@@ -233,29 +213,14 @@ class ReadInputOutput:
                 if file =="사전테스트-생육데이터.xlsx":
                     output=pd.read_excel(output_growth_data_folder_path,file)
                     print("생육데이터를 받았습니다")
-
-        
         ### output data Fetching 
         print(yellow("🔹 Data preprocessing Start--->"))
         ReadInputOutput.make_DayToWeek(input_b, input_c, input_d, input_e)
         print(" ---a")
 
 
-# print(output.tail())
-# print(input_b.tail())
-
-
-start = time.time()
-
-end = time.time()
-
-print(f"{end - start:.5f} sec")
-
-
-
-
-
-
+#/Users/forrestdpark/Desktop/PDG/Python_/BerryMLcompetetion/BerryMachineLearning/Data/사전테스트-환경데이터
+# /Users/forrestdpark/Desktop/PDG/Python_/BerryMLcompetetion/BerryMachineLearning/Data
 
 
 if __name__ == "__main__":
