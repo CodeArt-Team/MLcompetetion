@@ -120,22 +120,24 @@ try:
 
     print(yellow("📌 필요한 라이브러리 설치 및 import test 완료"))
     print(yellow("📌---System Check --- 📌"))
-    import platform; print(blue(f"\t {platform.platform()}",))
-    import sys; print(blue(f"\t Python {sys.version}"))
-    import sklearn; print(blue(f"\t Scikit-Learn {sklearn.__version__}"))
-    import xgboost; print(blue(f"\t XGBoost{xgboost.__version__}"))
+    import platform; print(blue(f"- {platform.platform()}",))
+    import sys; print(blue(f"- Python {sys.version}"))
+    import sklearn; print(blue(f"- Scikit-Learn {sklearn.__version__}"))
+    import xgboost; print(blue(f"- XGBoost{xgboost.__version__}"))
 except ImportError as e:
     print(f"필요한 라이브러리 임포트에 실패했습니다: {e}")
 
 
 class Inference():
-    def preprocessing(dataB, dataC, dataD, dataE):
+    ### 사전테스트용
+    def preprocessing(saveFilename,input_b, input_c, input_d, input_e,output):
+        ### Description :  data preprocessing 
+        ### Date : 2024.08.07
         from sklearn.preprocessing import MinMaxScaler
         dataB, dataC, dataD, dataE = input_b, input_c, input_d, input_e
         #컬럼이름변경
         # dataR.rename(columns={'생육주사': '주차'}, inplace=True)
-
-            # 전체 데이터를 사용하여 피벗 테이블을 생성합니다
+        # 전체 데이터를 사용하여 피벗 테이블을 생성합니다
         # '시설아이디' 유무에 따른 row 갯수 오류 확인하기
         dataR = output
 
@@ -170,7 +172,6 @@ class Inference():
             data['datetime'] = pd.to_datetime(data['datetime'])
             data['date'] = data['datetime'].dt.date
             data['time'] = data['datetime'].dt.hour
-        
 
         base_dateB = datetime(2023, 10, 6)
         base_dateC = datetime(2023, 9, 22)  
@@ -236,7 +237,6 @@ class Inference():
             data['CO2'] = normalCO2
             
 
-        dataE2
         dataT = pd.concat([dataB2, dataC2, dataD2, dataE2], ignore_index=True)
 
         dataT.rename(columns={"생육주차":"주차"}, inplace=True)
@@ -279,7 +279,7 @@ class Inference():
         # print(result.head())
         # 결과를 CSV 파일로 저장
         result.to_csv(f'{saveFilename}.csv', index=False)
-    
+    ### 예선용 
         
     def main():
         print("\n")
