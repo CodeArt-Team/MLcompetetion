@@ -76,7 +76,7 @@ class DataPreprocessing:
             print("Unknown System")
         print(colored_text("___## OS platform 한글 세팅완료 ## ___",'magenta'))
 
-    def dataInfo(df, replace_Nan=False, PrintOutColnumber = 0,nanFillValue=0):
+    def dataInfo(df, replace_Nan=False, PrintOutColnumber = 0,nanFillValue=0, graphPlot=True):
         column_count = len(df.columns)
         row_count = len(df.index)
         nul_count  = df.isnull().sum().sum()
@@ -85,6 +85,7 @@ class DataPreprocessing:
         if PrintOutColnumber ==0 :
             PrintOutColnumber = column_count
         print(yellow(f"- column 수 : {column_count}"))
+        print(df.columns)
         print(yellow(f"- row 수    : {row_count}"))
         print(yellow(f"- null 수   : {nul_count}"))
         
@@ -114,13 +115,13 @@ class DataPreprocessing:
                         for order,(i,v) in enumerate(zip(value_counts.index.tolist(), value_counts.values.tolist())):
                             print(magenta(f"\t\t |-[{order}] {i} : \t{v}"))
                         print("\t\t",magenta("--"*20))
-                        DataPreprocessing.column_hist(df,col)
+                        if graphPlot :DataPreprocessing.column_hist(df,col)
 
                     else: 
                         print(yellow(f"{idx}.[{col}({df.dtypes[col]})]:\t\t"),\
                         red(f"{len(df[col].unique())}"),f"\t/{len(df[col])} \t[uniq/raw]",\
                              sep=" ")
-                        DataPreprocessing.column_hist(df,col)
+                        if graphPlot :DataPreprocessing.column_hist(df,col)
 
                         
                     
@@ -138,7 +139,7 @@ class DataPreprocessing:
                         for order,(i,v) in enumerate(zip(value_counts.index.tolist(), value_counts.values.tolist())):
                             print(magenta(f"\t\t |-[{order}] {i} : \t{v}"))
                         print("\t\t",magenta("--"*20))
-                        DataPreprocessing.column_hist(df,col)
+                        if graphPlot :DataPreprocessing.column_hist(df,col)
 
 
         else: 
@@ -167,10 +168,35 @@ class DataPreprocessing:
             plt.title(f"{col} -Histogram", fontsize=15)
             plt.xlabel(col, fontsize=12)
             plt.ylabel("Density", fontsize=12)
+             # 기술 통계치 계산
+            mean_val = df[col].mean()
+            median_val = df[col].median()
+            std_val = df[col].std()
+            min_val = df[col].min()
+            max_val = df[col].max()
+
+            # 그래프에 기술 통계치 추가
+            stats_text = (
+            
+            f"""평균값 : {mean_val:<10.1f}
+            중앙값 : {median_val:<10.1f}
+            표준편차: {std_val:<10.1f}
+            최소값 : {min_val:<10.1f}
+            최대값 : {max_val:<10.1f}"""
+            )
+            
+            # 텍스트 위치 조정 (좌하단)
+            plt.text(x=0.95, y=0.95, s=stats_text, fontsize=8, 
+                    ha='right', va='top', transform=plt.gca().transAxes, 
+                    bbox=dict(facecolor='white', alpha=0.7))
             plt.show()
-        else: print(colored_text("숫자형데이터가 아닙니다",'red',bold=True))
+        else: 
+            print(colored_text("숫자형데이터가 아닙니다",'red',bold=True))
+            # sns.histplot(df[col], kde=True, bins=len(df[col].unique()))
+            # plt.xticks(rotation=45)  # x축 라벨을 45도 기울입니다
+            # plt.show()
 
-
+    
 
 if __name__ == "__main__":
     import pandas as pd ,sys
@@ -183,5 +209,4 @@ if __name__ == "__main__":
         restart_query = int(sys.stdin.readline())
         if restart_query == 0:
             break     
-    
     
