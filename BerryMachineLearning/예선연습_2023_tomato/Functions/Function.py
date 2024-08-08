@@ -201,7 +201,7 @@ class DataPreprocessing:
         dataCount = data.columns.shape[0]
         for i in range(dataCount):
 
-            input_data.columns[i]
+            data.columns[i]
             count_zero = (data[data.columns[i]] == 0).sum()
             count_non_zero = (data[data.columns[i]] != 0).sum()
             sizes = [count_zero, count_non_zero]
@@ -210,7 +210,7 @@ class DataPreprocessing:
             
             #파이차트 생성
             plt.figure(figsize=(3, 3))
-            plt.title(f"{input_data.columns[i]}컬럼 0비율")
+            plt.title(f"{data.columns[i]}컬럼 0비율")
             plt.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', startangle=140)
             plt.axis('equal')
             plt.show()
