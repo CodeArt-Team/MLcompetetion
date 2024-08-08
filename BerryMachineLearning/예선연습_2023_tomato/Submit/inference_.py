@@ -240,10 +240,6 @@ class Inference():
         dataT = pd.concat([dataB2, dataC2, dataD2, dataE2], ignore_index=True)
 
         dataT.rename(columns={"생육주차":"주차"}, inplace=True)
-
-
-
-        
         dataT.rename(columns={"주차":"weeks"}, inplace=True)
         dataT.rename(columns={"farm":"시설아이디"}, inplace=True)
         pivot.rename(columns={"주차":"weeks"}, inplace=True)     
