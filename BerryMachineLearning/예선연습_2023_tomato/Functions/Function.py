@@ -273,7 +273,7 @@ class ModelTest():
         from sklearn.metrics import mean_squared_error
         from sklearn.metrics import mean_squared_error, r2_score
         from sklearn.model_selection import cross_val_score
-
+        import joblib
 
         ## Linear Regression model 비교
         lin_regressor = LinearRegression()
@@ -291,6 +291,9 @@ class ModelTest():
         print(f"Linear regression model R2 score: {r2:.2f}")
         print("\t ",f"LR cv score : {rmse_cv}")
         print("\t ",f"LR cv RMSE  average : {rmse_cv.mean():.2f}")
+                # 모델 저장
+        joblib.dump(multi_output_regressor_lin, "Linear_model")
+        print(f'모델이 {"Linear_model"} 이름으로 저장됨')
         predictions = multi_output_regressor_lin.predict(test_input)
         ModelTest.real_pred_compare(predictions,test_target,test_input)
 
@@ -303,6 +306,7 @@ class ModelTest():
         from xgboost import XGBRegressor
         from sklearn.metrics import mean_squared_error, r2_score
         from sklearn.model_selection import cross_val_score
+        import joblib
 
         ## KNN regression model
         knn_regressor = KNeighborsRegressor(n_neighbors=3)
@@ -324,6 +328,9 @@ class ModelTest():
         rmse_cv = np.sqrt(-scores_cv)
         print("\t ",f"KNN cv score : {rmse_cv}")
         print("\t ",f"KNN cv RMSE average : {rmse_cv.mean():.2f}")
+        # 모델 저장
+        joblib.dump(multi_output_regressor_knn, "KNN_model")
+        print(f'모델이 {"KNN_model"} 이름으로 저장됨')
         predictions = multi_output_regressor_knn.predict(test_input)
 
         ModelTest.real_pred_compare(predictions,test_target,test_input)
@@ -336,6 +343,7 @@ class ModelTest():
         from xgboost import XGBRegressor
         from sklearn.metrics import mean_squared_error, r2_score
         from sklearn.model_selection import cross_val_score
+        import joblib
 
         xg_reg = XGBRegressor()
         multi_output_regressor_xg = MultiOutputRegressor(xg_reg)
@@ -353,6 +361,9 @@ class ModelTest():
         ### 교찯검증
         scores_cv = cross_val_score(multi_output_regressor_xg,train_input,train_target,scoring='neg_mean_squared_error',cv=10)
         rmse_cv = np.sqrt(-scores_cv)
+        # 모델 저장
+        joblib.dump(multi_output_regressor_xg, "XG_model")
+        print(f'모델이 {"XG_model"} 이름으로 저장됨')
         print("\t ",f"XGB cv score : {rmse_cv}")
         print("\t ",f"XGB cv RMSE average : {rmse_cv.mean():.2f}")
         predictions = multi_output_regressor_xg.predict(test_input)
@@ -366,8 +377,10 @@ class ModelTest():
         from xgboost import XGBRegressor
         from sklearn.metrics import mean_squared_error, r2_score
         from sklearn.model_selection import cross_val_score
+        import joblib
+        import os
 
-        rf_reg = RandomForestRegressor(n_estimators=100, random_state=42)
+        rf_reg = RandomForestRegressor(n_estimators=1, random_state=42)
         multi_output_regressor_rf = MultiOutputRegressor(rf_reg)
         multi_output_regressor_rf.fit(train_input, train_target)
 
@@ -392,8 +405,13 @@ class ModelTest():
         print("\t ", red(f"RF cv R2 scores: {r2_scores_cv}"))
         print("\t ", green(f"RF cv R2 average: {r2_scores_cv.mean():.2f}"))
 
+        # 모델 저장
+        joblib.dump(multi_output_regressor_rf, "RF_model")
+        print(f'모델이 {"RF_model"} 이름으로 저장됨')
+
         predictions = multi_output_regressor_rf.predict(test_input)
         ModelTest.real_pred_compare(predictions, test_target, test_input)
+
 
     
 if __name__ == "__main__":
