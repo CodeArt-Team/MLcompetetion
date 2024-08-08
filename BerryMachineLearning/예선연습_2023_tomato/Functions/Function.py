@@ -196,6 +196,24 @@ class DataPreprocessing:
             # plt.xticks(rotation=45)  # x축 라벨을 45도 기울입니다
             # plt.show()
 
+    def column_zero_find(data):
+        import matplotlib.pyplot as plt
+        dataCount = data.columns.shape[0]
+        for i in range(dataCount):
+
+            input_data.columns[i]
+            count_zero = (data[data.columns[i]] == 0).sum()
+            count_non_zero = (data[data.columns[i]] != 0).sum()
+            sizes = [count_zero, count_non_zero]
+            labels = [f'{count_zero}개\n0인 데이터', f'{count_non_zero}개\n0이 아닌 데이터']
+            colors = ['#ff9999','#66b3ff']
+            
+            #파이차트 생성
+            plt.figure(figsize=(3, 3))
+            plt.title(f"{input_data.columns[i]}컬럼 0비율")
+            plt.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', startangle=140)
+            plt.axis('equal')
+            plt.show()
     
 
 if __name__ == "__main__":
