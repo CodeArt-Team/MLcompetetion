@@ -215,7 +215,9 @@ class DataPreprocessing:
             plt.axis('equal')
             plt.show()
     
-
+class ModelTest():
+    print("")
+    
 if __name__ == "__main__":
     import pandas as pd ,sys
     input_data = pd.read_csv('/Users/forrestdpark/Desktop/PDG/Python_/BerryMLcompetetion/BerryMachineLearning/예선연습_2023_tomato/Data/2023_smartFarm_AI_hackathon_dataset.csv')
