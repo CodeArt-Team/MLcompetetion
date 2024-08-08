@@ -103,6 +103,52 @@ class Visualization():
 class DataPreprocessing:
     def __init__(self) -> None:
         pass
+    ## 농가별로 데이터 나누기 
+    def seperate_col_data(df,colname):
+        # df  =out
+        # colname ='시설아이디'
+        uniq_of_col_data = df[colname].unique().tolist()
+        print(yellow(f" {colname}에는 {len(uniq_of_col_data)} 종류의 데이터 가있습니다. "))
+        seperated_data = {}
+        for i in uniq_of_col_data:
+            seperated_data[i] = df[df[colname]==i] 
+        data_shapes=[seperated_data[i].shape for i in uniq_of_col_data]
+        
+        print(yellow(f" 기존의 data 를 "))
+        for (i,j) in zip(list(seperated_data.keys()),data_shapes):
+            print(yellow(f"  {i} : {j}"))
+        else:print(yellow(f" 로 쪼갭니다"))
+        
+        # print(yellow(f"{}"))
+        # return seperated_data
+    ## 농사기간 계산
+    def calc_duration(df, datetime_col):
+        from datetime import datetime
+        if datetime_col in df.columns :
+            if df[datetime_col].dtype=='O':
+                test_dt_start= df[datetime_col].sort_values(ignore_index=True,ascending=True).tolist()[0]
+                test_dt_end= df[datetime_col].sort_values(ignore_index=True,ascending=True).tolist()[-1]
+                
+                # datetime.fromtimestamp(test_dt)
+                date_start = datetime.strptime(test_dt_start, '%Y-%m-%d %H:%M').date()
+                date_end = datetime.strptime(test_dt_end, '%Y-%m-%d %H:%M').date()
+                return (date_end- date_start).days
+            elif df[datetime_col].dtype=='int64':
+                test_dt_start= df[datetime_col].sort_values(ignore_index=True,ascending=True).tolist()[0]
+                test_dt_end= df[datetime_col].sort_values(ignore_index=True,ascending=True).tolist()[-1]
+                date_start = datetime.strptime(str(test_dt_start), '%Y%m%d')
+                date_end = datetime.strptime(str(test_dt_end), '%Y%m%d')
+                return (date_end- date_start).days
+    ## 주차 계산 함수
+    def calculate_week(date, base_date, base_week):
+            base_date_timestamp = pd.Timestamp(base_date)
+
+            # 날짜 차이 계산
+            delta_days = (date - base_date_timestamp).dt.days
+
+            # 기준 주차에서 날짜 차이를 주 단위로 변환
+            week = base_week + delta_days // 7
+            return week
     
     def plotSetting(pltStyle="seaborn-v0_8"):
         '''
