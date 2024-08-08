@@ -218,7 +218,9 @@ class DataPreprocessing:
 
     # 각 컬럼별 상관도 높은순으로 뽑기
     def show_corr(data,count):
-        filtered_corr = data.corr()
+        import numpy as np
+        data2 = data.select_dtypes(include=np.number).columns
+        filtered_corr = data2.corr()
         for i in range(len(filtered_corr.columns)):
             abs_values = filtered_corr[filtered_corr.columns[i]].abs()
 
