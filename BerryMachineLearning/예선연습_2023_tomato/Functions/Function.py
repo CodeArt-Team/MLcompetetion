@@ -237,6 +237,92 @@ class DataPreprocessing:
 
             top_values = abs_values.nlargest(count)
             print(f"{filtered_corr.columns[i]} 컬럼의 상관계수 탑 5\n\n",top_values[0:count],"\n")
+
+    def plot_feature_importance(model_filename, feature_names, output_names):
+
+        """
+        특성 중요도 그래프 시각화, 순위 함수
+        model: 학습한 모델 변수
+        -> 모델은 모델 함수에서 return값으로 변수를 뱉어내면 그 모델을 넣으면 됨
+
+        feature_names: 인풋컬럼
+        feature_names 예시:
+        feature_names = ['inTp', 'inHd', 'otmsuplyqy', 'acSlrdQy', 'cunt',
+        'ph', 'outTp', 'outWs', 'daysuplyqy', 'inCo2', 'ec', 'frmYear',
+        'frmWeek', 'frtstGrupp']
+
+        output_names: 아웃풋컬럼
+        아웃풋 컬럼 예시:
+        output_names = ['outtrn_cumsum', 'HeatingEnergyUsage_cumsum']
+        @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        실 사용시에는 모델 불러오는 경로설정 필요
+        @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        """
+
+
+        import joblib
+        import matplotlib.pyplot as plt
+        # 모델 불러오기
+        model = joblib.load(model_filename)
+        print(model)
+        # 특성 중요도 추출
+        importances = model.estimators_[0].feature_importances_
+        
+        # 중요도에 따라 특성 정렬
+        indices = np.argsort(importances)[::-1]
+        
+        # 그래프 그리기
+        plt.figure(figsize=(12, 8))
+        plt.title("Feature Importances")
+        plt.bar(range(len(importances)), importances[indices])
+        plt.xticks(range(len(importances)), [feature_names[i] for i in indices], rotation=90)
+        plt.tight_layout()
+        plt.show()
+        
+        # 중요도 순으로 특성 출력
+        for f in range(len(importances)):
+            print("%d. %s (%f)" % (f + 1, feature_names[indices[f]], importances[indices[f]]))
+    
+    def cor_hitmap(dataframe, method='pearson', figsize=(20, 16)):
+        """
+        데이터프레임의 모든 컬럼 간 상관관계를 계산하고 히트맵으로 시각화
+        
+        Parameters:
+        dataframe (pd.DataFrame): 상관관계를 확인할 데이터프레임
+        method (str): 상관관계 계산 방법 ('pearson', 'spearman', 'kendall')
+        figsize (tuple): 그래프 크기
+        all_cols = input_cols + output_cols
+        correlation_data = input_data[all_cols]
+
+        cor_hitmap(correlation_data)
+        Returns:
+        pd.DataFrame: 상관관계 매트릭스
+        실행법
+        all_cols = input_cols + output_cols
+        correlation_data = input_data[all_cols]
+
+        cor_hitmap(correlation_data)
+
+
+
+        """
+
+        import pandas as pd
+        import seaborn as sns
+        import matplotlib.pyplot as plt
+        # 상관관계 계산
+        corr_matrix = dataframe.corr(method=method)
+        
+        # 히트맵 그리기
+        plt.figure(figsize=figsize)
+        sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', vmin=-1, vmax=1, center=0, fmt='.2f')
+        plt.title(f'Correlation Heatmap ({method})')
+        plt.xticks(rotation=90)
+        plt.yticks(rotation=0)
+        plt.tight_layout()
+        plt.show()
+        
+        return corr_matrix
     
 class ModelTest():
     # 예시 데이터 (training_table과 target_table이 이미 존재한다고 가정)
@@ -311,6 +397,11 @@ class ModelTest():
         from sklearn.metrics import mean_squared_error, r2_score
         from sklearn.model_selection import cross_val_score
         import joblib
+        """
+        @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        실시용시에는 모델 저장 경로 설정하는 과정 필요!
+        @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        """
 
         ## KNN regression model
         knn_regressor = KNeighborsRegressor(n_neighbors=3)
