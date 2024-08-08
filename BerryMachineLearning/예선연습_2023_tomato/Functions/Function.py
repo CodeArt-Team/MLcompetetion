@@ -196,6 +196,7 @@ class DataPreprocessing:
             # plt.xticks(rotation=45)  # x축 라벨을 45도 기울입니다
             # plt.show()
 
+    # 각 컬럼별 0 값 비율,갯수보기
     def column_zero_find(data):
         import matplotlib.pyplot as plt
         dataCount = data.columns.shape[0]
@@ -214,6 +215,15 @@ class DataPreprocessing:
             plt.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', startangle=140)
             plt.axis('equal')
             plt.show()
+
+    # 각 컬럼별 상관도 높은순으로 뽑기
+    def show_corr(data,count):
+        filtered_corr = data.corr()
+        for i in range(len(filtered_corr.columns)):
+            abs_values = filtered_corr[filtered_corr.columns[i]].abs()
+
+            top_values = abs_values.nlargest(count)
+            print(f"{filtered_corr.columns[i]} 컬럼의 상관계수 탑 5\n\n",top_values[0:count],"\n")
     
 class ModelTest():
     print("")
