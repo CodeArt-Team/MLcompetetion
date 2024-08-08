@@ -1,15 +1,23 @@
 ''' 
-📌 Fucntion Description :  Data frame 의 정제를 위한 기본 정보 출력
+📌 Description :  
+    - DataPreprocessing class :
+        0) plotSetting
+        1) DataInfo
+        2) column_hist
+        3) column_zero_find
+        4) show_corr
+    - ModelTest class 
+        1) real_pred_compare
+        2) linear_regressor_prdict
+        3) knn_regressor_predict
+        4) xgboost_regressor_predict
+        5) randomforest_regressor_predict
 📌 Date : 2024.06.02 
 📌 Author : Forrest D Park 
 📌 Update : 
     2024.08.07 by pdg : DataInfo 함수 생성
 
 '''
-
-
-
-
 
 def colored_text(text, color='default', bold=False):
         '''
@@ -317,7 +325,6 @@ class DataPreprocessing:
         return corr_matrix
     
 class ModelTest():
-    print("")
     # 예시 데이터 (training_table과 target_table이 이미 존재한다고 가정)
     # training_table = pd.DataFrame(...)
     # target_table = pd.DataFrame(...)
@@ -348,8 +355,6 @@ class ModelTest():
                 print(f"    \t{formatted_columns}")
                 print(f"실제\t  {str_real}", sep='\t')
                 print(f"예측\t  {str_pred}", sep='\t')
-
-
 
     def linear_regressor_prdict(train_input, train_target, test_input, test_target):
         from statistics import LinearRegression
@@ -382,7 +387,6 @@ class ModelTest():
         print(f'모델이 {"Linear_model"} 이름으로 저장됨')
         predictions = multi_output_regressor_lin.predict(test_input)
         ModelTest.real_pred_compare(predictions,test_target,test_input)
-
 
     def knn_regressor_predict(train_input, train_target, test_input, test_target):
         import numpy as np
@@ -425,7 +429,6 @@ class ModelTest():
         predictions = multi_output_regressor_knn.predict(test_input)
 
         ModelTest.real_pred_compare(predictions,test_target,test_input)
-
 
     def xgboost_regressor_predict(train_input, train_target, test_input, test_target):
         import numpy as np
