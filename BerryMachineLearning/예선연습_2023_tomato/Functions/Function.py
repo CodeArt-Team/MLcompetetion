@@ -8,6 +8,9 @@
 '''
 
 
+
+
+
 def colored_text(text, color='default', bold=False):
         '''
         #### 예시 사용법
@@ -229,6 +232,169 @@ class DataPreprocessing:
     
 class ModelTest():
     print("")
+    # 예시 데이터 (training_table과 target_table이 이미 존재한다고 가정)
+    # training_table = pd.DataFrame(...)
+    # target_table = pd.DataFrame(...)
+
+    # 데이터 분할
+    def real_pred_compare(predictions,test_target,test_input):
+        print(yellow("🔸🔸🔸🔸🔸🔸[[실제 예측값 확인]]🔸🔸🔸🔸🔸🔸"))
+        for idx,(pred_result,real,test_in) in enumerate(zip(predictions,test_target.values,test_input.values)):
+            if idx < 4:
+                str_real = "\t"
+                str_pred = "\t"
+                str_input = "\t"
+                for i in list(real):
+                    str_real = "\t".join("{:>8d}".format(int(val)) for val in real)
+                for j in list(map(int,(pred_result))):
+                    str_pred = "\t".join("{:>8d}".format(int(val)) for val in pred_result)
+                for k in list(test_in):
+                    str_input += str(k) + "\t"
+
+                
+                print(f"***** {idx} 번째 test 결과 ***** ")
+                print("인풋 정보"+"---"*200)
+                print(f"인풋칼럼","\t".join((list(test_input.columns))),sep = "\t\t")
+                print(f"***인풋\t  {str_input}", sep='\t')
+                print("아웃풋 정보"+"---"*200)
+                print(f"  ","\t".join((list(test_target.columns))),sep = "\t\t")
+                formatted_columns = "\t".join("{:>8s}".format(col) for col in list(test_target.columns))
+                print(f"    \t{formatted_columns}")
+                print(f"실제\t  {str_real}", sep='\t')
+                print(f"예측\t  {str_pred}", sep='\t')
+
+
+
+    def linear_regressor_prdict(train_input, train_target, test_input, test_target):
+        from statistics import LinearRegression
+        import numpy as np
+        from sklearn.multioutput import MultiOutputRegressor
+        from sklearn.linear_model import LinearRegression
+        from sklearn.metrics import mean_squared_error
+        from sklearn.metrics import mean_squared_error, r2_score
+        from sklearn.model_selection import cross_val_score
+
+
+        ## Linear Regression model 비교
+        lin_regressor = LinearRegression()
+        multi_output_regressor_lin = MultiOutputRegressor(lin_regressor)
+        multi_output_regressor_lin.fit(train_input, train_target)
+        y_pred_lin = multi_output_regressor_lin.predict(test_input)
+        mse = mean_squared_error(test_target, y_pred_lin)
+        rmse = np.sqrt(mse)
+        r2 = r2_score(test_target, y_pred_lin) 
+        
+        #### 교차검증 
+        scores_cv = cross_val_score(multi_output_regressor_lin,train_input,train_target,scoring='neg_mean_squared_error',cv=10)
+        rmse_cv = np.sqrt(-scores_cv)
+        print(f"Linear regression model RMSE: {rmse:.2f}")
+        print(f"Linear regression model R2 score: {r2:.2f}")
+        print("\t ",f"LR cv score : {rmse_cv}")
+        print("\t ",f"LR cv RMSE  average : {rmse_cv.mean():.2f}")
+        predictions = multi_output_regressor_lin.predict(test_input)
+        ModelTest.real_pred_compare(predictions,test_target,test_input)
+
+
+    def knn_regressor_predict(train_input, train_target, test_input, test_target):
+        import numpy as np
+        from sklearn.multioutput import MultiOutputRegressor
+        from sklearn.neighbors import KNeighborsRegressor
+        from sklearn.metrics import mean_squared_error
+        from xgboost import XGBRegressor
+        from sklearn.metrics import mean_squared_error, r2_score
+        from sklearn.model_selection import cross_val_score
+
+        ## KNN regression model
+        knn_regressor = KNeighborsRegressor(n_neighbors=3)
+        ## Multi Output Setting
+        multi_output_regressor_knn = MultiOutputRegressor(knn_regressor)
+        multi_output_regressor_knn.fit(train_input, train_target)
+
+        score = multi_output_regressor_knn.score(test_input, test_target)
+        y_pred_knn = multi_output_regressor_knn.predict(test_input)
+        mse = mean_squared_error(test_target, y_pred_knn)
+        rmse = np.sqrt(mse)
+        # R2 스코어 계산
+        r2 = r2_score(test_target, y_pred_knn)
+        print(yellow(f'KNN(3) regression model score: {score}'))
+        print(f'KNN(3) regression model RMSE: {rmse:.2f}')
+        print(f'KNN regression model R2 score: {r2:.2f}')
+        #### 교차검증 
+        scores_cv = cross_val_score(multi_output_regressor_knn,train_input,train_target,scoring='neg_mean_squared_error',cv=10)
+        rmse_cv = np.sqrt(-scores_cv)
+        print("\t ",f"KNN cv score : {rmse_cv}")
+        print("\t ",f"KNN cv RMSE average : {rmse_cv.mean():.2f}")
+        predictions = multi_output_regressor_knn.predict(test_input)
+
+        ModelTest.real_pred_compare(predictions,test_target,test_input)
+
+
+    def xgboost_regressor_predict(train_input, train_target, test_input, test_target):
+        import numpy as np
+        from sklearn.multioutput import MultiOutputRegressor
+        from sklearn.metrics import mean_squared_error
+        from xgboost import XGBRegressor
+        from sklearn.metrics import mean_squared_error, r2_score
+        from sklearn.model_selection import cross_val_score
+
+        xg_reg = XGBRegressor()
+        multi_output_regressor_xg = MultiOutputRegressor(xg_reg)
+        multi_output_regressor_xg.fit(train_input, train_target)
+
+        score = multi_output_regressor_xg.score(test_input, test_target)
+        y_pred_xg = multi_output_regressor_xg.predict(test_input)
+        mse = mean_squared_error(test_target, y_pred_xg)
+        rmse = np.sqrt(mse)
+        # R2 스코어 계산
+        r2 = r2_score(test_target, y_pred_xg)
+        print(yellow(f'XGB regression model score: {score}'))
+        print(f'XGBoost(3) regression model RMSE: {rmse:.2f}')
+        print(f'XGBoost regression model R2 score: {r2:.2f}')
+        ### 교찯검증
+        scores_cv = cross_val_score(multi_output_regressor_xg,train_input,train_target,scoring='neg_mean_squared_error',cv=10)
+        rmse_cv = np.sqrt(-scores_cv)
+        print("\t ",f"XGB cv score : {rmse_cv}")
+        print("\t ",f"XGB cv RMSE average : {rmse_cv.mean():.2f}")
+        predictions = multi_output_regressor_xg.predict(test_input)
+        ModelTest.real_pred_compare(predictions,test_target,test_input)
+
+    def randomforest_regressor_predict(train_input, train_target, test_input, test_target):
+        import numpy as np
+        from sklearn.ensemble import RandomForestRegressor
+        from sklearn.multioutput import MultiOutputRegressor
+        from sklearn.metrics import mean_squared_error
+        from xgboost import XGBRegressor
+        from sklearn.metrics import mean_squared_error, r2_score
+        from sklearn.model_selection import cross_val_score
+
+        rf_reg = RandomForestRegressor(n_estimators=100, random_state=42)
+        multi_output_regressor_rf = MultiOutputRegressor(rf_reg)
+        multi_output_regressor_rf.fit(train_input, train_target)
+
+        y_pred_rf = multi_output_regressor_rf.predict(test_input)
+        mse = mean_squared_error(test_target, y_pred_rf)
+        rmse = np.sqrt(mse)
+        r2 = r2_score(test_target, y_pred_rf)
+
+        print(yellow(f'RandomForest regression model RMSE: {rmse:.2f}'))
+        print(f'RandomForest regression model R2 score: {r2:.2f}')
+
+        # 교차 검증
+        scores_cv = cross_val_score(multi_output_regressor_rf, train_input, train_target, 
+                                    scoring='neg_mean_squared_error', cv=10)
+        rmse_cv = np.sqrt(-scores_cv)
+        print("\t ", red(f"RF cv RMSE scores: {rmse_cv}"))
+        print("\t ", green(f"RF cv RMSE average: {rmse_cv.mean():.2f}"))
+
+        # R2 교차 검증
+        r2_scores_cv = cross_val_score(multi_output_regressor_rf, train_input, train_target, 
+                                    scoring='r2', cv=10)
+        print("\t ", red(f"RF cv R2 scores: {r2_scores_cv}"))
+        print("\t ", green(f"RF cv R2 average: {r2_scores_cv.mean():.2f}"))
+
+        predictions = multi_output_regressor_rf.predict(test_input)
+        ModelTest.real_pred_compare(predictions, test_target, test_input)
+
     
 if __name__ == "__main__":
     import pandas as pd ,sys
