@@ -18,11 +18,6 @@
     2024.08.07 by pdg : DataInfo 함수 생성
 
 '''
-import sys
-sys.path.append("../DataAnalysis/Functions/")
-def imd(image_address,width =500, height=300):
-    print(f'<br><img src = "{image_address}" width="{width}" height="{height}"/><br>')
-    
 
 
 
