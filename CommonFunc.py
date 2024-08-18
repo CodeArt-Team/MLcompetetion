@@ -19,7 +19,8 @@
 
 '''
 
-
+def imd(image_address,width =500, height=300):
+    print(f'<br><img src = "{image_address}" width="{width}" height="{height}"/><br>')
 
 def colored_text(text, color='default', bold=False):
         '''
