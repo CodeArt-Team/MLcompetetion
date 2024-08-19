@@ -1,0 +1,21 @@
+- 업종별 벤처기업 일일방송 광고 신탁 데이터
+  : https://www.data.go.kr/data/15111061/fileData.do
+
+- 방송 시간대별 벤처기업 광고수 데이터 
+   : https://www.data.go.kr/data/15111057/fileData.do
+
+- 업종별 벤처기업 TV광고영상 사물인식 데이터
+  : https://www.data.go.kr/data/15111065/fileData.do
+
+- 업종별 벤처기업 방송광고 지원현황 데이터
+  : https://www.data.go.kr/data/15111067/fileData.do
+
+- 업종별 광고효과 시장분석 데이터
+  : https://www.data.go.kr/data/15111068/fileData.do
+
+- 업종별 벤처기업 신규 광고주 등록 통계 데이터
+  : https://www.data.go.kr/data/15111073/fileData.do
+
+- 시도별 벤처기업 신규 광고주 등록 통계 데이터
+  : https://www.data.go.kr/data/15111074/fileData.do
+

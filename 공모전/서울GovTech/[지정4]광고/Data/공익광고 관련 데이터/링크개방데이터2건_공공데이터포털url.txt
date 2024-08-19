@@ -1,0 +1,8 @@
+- 공익광고 효과평가 관련 데이터
+  : https://www.data.go.kr/data/15077528/fileData.do
+
+- 공익광고 주제선정 관련 데이터
+  : https://www.data.go.kr/data/15077527/fileData.do
+
+
+<해당 공공데이터포털 페이지 내, URL 링크 참고>

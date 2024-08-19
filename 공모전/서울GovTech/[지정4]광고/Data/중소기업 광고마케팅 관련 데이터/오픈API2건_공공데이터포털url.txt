@@ -1,0 +1,6 @@
+(오픈 API)
+- 한국방송광고진흥공사_방송 시간대별 벤처기업 광고수 데이터 조회  서비스
+  : https://www.data.go.kr/data/15110963/openapi.do
+
+- 한국방송광고진흥공사_업종별 벤처기업 일일방송 광고 신탁 데이터   조회 서비스
+  : https://www.data.go.kr/data/15110965/openapi.do
