@@ -1,5 +1,9 @@
 ''' 
 📌 Description :  
+
+    - 경진대회 데이터 셋 보기위한 함수들 ...
+    - Visualization Class :
+        0)
     - DataPreprocessing class :
         0) plotSetting
         1) DataInfo
@@ -19,7 +23,7 @@
 
 '''
 
-def imd(image_address,width =500, height=300):
+def imd(image_address,width =700, height=300):
     print(f'<br><img src = "{image_address}" width="{width}" height="{height}"/><br>')
 
 def colored_text(text, color='default', bold=False):
@@ -53,15 +57,56 @@ def colored_text(text, color='default', bold=False):
         reset_code = colors['reset']
         
         return f"{bold_code}{color_code}{text}{reset_code}"
-def blue(str):return colored_text(str,'blue')
-def yellow(str):return colored_text(str,'yellow',bold=True)
-def red(str):return colored_text(str,'red',bold=True)
-def green(str):return colored_text(str,'green',bold=True)
-def magenta(str):return colored_text(str,'magenta')
+def blue(str,b=False):return colored_text(str,'blue',bold=b)
+def yellow(str,b=False):return colored_text(str,'yellow',bold=b)
+def red(str,b=False):return colored_text(str,'red',bold=b)
+def green(str,b=False):return colored_text(str,'green',bold=b)
+def magenta(str,b=False):return colored_text(str,'magenta',bold=b)
 def Explaination(title,explain):
     title =str(title).upper()
     print(colored_text(f"___ 🟡 {title}. ",'green',bold=True))
     print(colored_text(f"______ 📌 {explain}",'yellow'))
+
+
+### Common  library install 
+# !pip install numpy
+# !pip install matplotlib
+# !pip install pandas
+
+
+class DataAcquisition():
+    def selenium_APIdata_get(endpoint_base,encode_key,pageNum=1,Rows=1):
+        from urllib.parse import urlencode,unquote
+        decode_key ="w1N+WdpiUt4yMy2JifOenamzNXc6HCceZ596C21rNM+LICP2KiUHN0E0F3Zf4Yu13zM8Myc/ZtIzgFBcywyxXQ=="
+        queryString ="?"+urlencode(
+            {
+                "serviceKey":unquote(f"{encode_key}"),
+                "pageNo":1,
+                "numOfRows":1,
+                "resultType":"json",
+                
+            }
+        )
+        query_URL = endpoint_base+queryString
+        # !pip install selenium
+        # !pip install webdriver-manager
+        from selenium import webdriver
+        from selenium.webdriver.chrome.service import Service
+        from webdriver_manager.chrome import ChromeDriverManager
+        from selenium.webdriver.common.by import By
+        import json
+        from pprint import pprint
+        # Chrome browser  와 Chrome Driver Version 확인하기 
+        chrome_options = webdriver.ChromeOptions()
+
+        hrome_options = webdriver.ChromeOptions()
+        chrome_options.add_argument('--headless')  # 헤드리스 모드 활성화
+        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+        driver.get(query_URL)
+        data =driver.find_element(By.XPATH,'/html/body/pre').text
+        data_json = json.loads(data)
+
+        pprint(data_json["response"])
 
 class Visualization():
     
@@ -69,8 +114,10 @@ class Visualization():
         
         import seaborn as sns
         import matplotlib.pyplot as plt
-        import platform
+        import platform,os
         from matplotlib import font_manager, rc
+        
+
         # 시각화 설정
         plt.style.use("seaborn-v0_8")
         plt.rcParams['axes.unicode_minus'] = False
@@ -105,61 +152,29 @@ class Visualization():
 class DataPreprocessing:
     def __init__(self) -> None:
         pass
-    ## 농가별로 데이터 나누기 
-    def seperate_col_data(df,colname):
-        # df  =out
-        # colname ='시설아이디'
-        uniq_of_col_data = df[colname].unique().tolist()
-        print(yellow(f" {colname}에는 {len(uniq_of_col_data)} 종류의 데이터 가있습니다. "))
-        seperated_data = {}
-        for i in uniq_of_col_data:
-            seperated_data[i] = df[df[colname]==i] 
-        data_shapes=[seperated_data[i].shape for i in uniq_of_col_data]
-        
-        print(yellow(f" 기존의 data 를 "))
-        for (i,j) in zip(list(seperated_data.keys()),data_shapes):
-            print(yellow(f"  {i} : {j}"))
-        else:print(yellow(f" 로 쪼갭니다"))
-        
-        # print(yellow(f"{}"))
-        # return seperated_data
-    ## 농사기간 계산
-    def calc_duration(df, datetime_col):
-        from datetime import datetime
-        if datetime_col in df.columns :
-            if df[datetime_col].dtype=='O':
-                test_dt_start= df[datetime_col].sort_values(ignore_index=True,ascending=True).tolist()[0]
-                test_dt_end= df[datetime_col].sort_values(ignore_index=True,ascending=True).tolist()[-1]
-                
-                # datetime.fromtimestamp(test_dt)
-                date_start = datetime.strptime(test_dt_start, '%Y-%m-%d %H:%M').date()
-                date_end = datetime.strptime(test_dt_end, '%Y-%m-%d %H:%M').date()
-                return (date_end- date_start).days
-            elif df[datetime_col].dtype=='int64':
-                test_dt_start= df[datetime_col].sort_values(ignore_index=True,ascending=True).tolist()[0]
-                test_dt_end= df[datetime_col].sort_values(ignore_index=True,ascending=True).tolist()[-1]
-                date_start = datetime.strptime(str(test_dt_start), '%Y%m%d')
-                date_end = datetime.strptime(str(test_dt_end), '%Y%m%d')
-                return (date_end- date_start).days
-    ## 주차 계산 함수
-    def calculate_week(date, base_date, base_week):
-            base_date_timestamp = pd.Timestamp(base_date)
-
-            # 날짜 차이 계산
-            delta_days = (date - base_date_timestamp).dt.days
-
-            # 기준 주차에서 날짜 차이를 주 단위로 변환
-            week = base_week + delta_days // 7
-            return week
-    
-    def plotSetting(pltStyle="seaborn-v0_8"):
+    def plotSetting(pltStyle="seaborn-v0_8", Title = ""):
         '''
         # Fucntion Description : Plot 한글화 Setting
         # Date : 2024.06.05
         # Author : Forrest D Park 
         # update : 
         '''
-        Explaination("plotSetting","matplotlib plot 한글화 Setting")
+        import os
+        
+        import warnings ;warnings.filterwarnings('ignore')
+        import sys ;sys.path.append("../../../")
+        sys.path.append("../")
+        sys.path.append("../../")
+        random_imoticon = ["🙀","👻","😜","🤗","🙄","🤑","🤖"]
+        import numpy as np
+        import random
+        
+        print(green(f"______ 가상환경 체크 : {os.environ['CONDA_DEFAULT_ENV']}",True))
+        print(green(f"Python 설치 경로:{sys.executable}"))
+
+        print(green(f"______ Graph 한글화 Setting",True))
+        
+        imo = random_imoticon[random.randrange(1,len(random_imoticon))]
         # graph style seaborn
         import matplotlib.pyplot as plt # visiulization
         import platform
@@ -173,7 +188,8 @@ class DataPreprocessing:
             rc('font', family=font_name)
         else:
             print("Unknown System")
-        print(colored_text("___## OS platform 한글 세팅완료 ## ___",'magenta'))
+        print(colored_text("______👏👏 OS platform 한글 세팅완료",'magenta',bold=True))
+        print(yellow(f"✻✻✻✻______{imo*1} {Title} {imo*1}______✻✻✻✻",True))
 
     def dataInfo(df, replace_Nan=False, PrintOutColnumber = 0,nanFillValue=0, graphPlot=True):
         column_count = len(df.columns)
@@ -325,6 +341,54 @@ class DataPreprocessing:
 
             top_values = abs_values.nlargest(count)
             print(f"{filtered_corr.columns[i]} 컬럼의 상관계수 탑 5\n\n",top_values[0:count],"\n")
+    
+    
+        ## 농가별로 데이터 나누기 
+    def seperate_col_data(df,colname):
+        # df  =out
+        # colname ='시설아이디'
+        uniq_of_col_data = df[colname].unique().tolist()
+        print(yellow(f" {colname}에는 {len(uniq_of_col_data)} 종류의 데이터 가있습니다. "))
+        seperated_data = {}
+        for i in uniq_of_col_data:
+            seperated_data[i] = df[df[colname]==i] 
+        data_shapes=[seperated_data[i].shape for i in uniq_of_col_data]
+        
+        print(yellow(f" 기존의 data 를 "))
+        for (i,j) in zip(list(seperated_data.keys()),data_shapes):
+            print(yellow(f"  {i} : {j}"))
+        else:print(yellow(f" 로 쪼갭니다"))
+        
+        # print(yellow(f"{}"))
+        # return seperated_data
+    ## 농사기간 계산
+    def calc_duration(df, datetime_col):
+        from datetime import datetime
+        if datetime_col in df.columns :
+            if df[datetime_col].dtype=='O':
+                test_dt_start= df[datetime_col].sort_values(ignore_index=True,ascending=True).tolist()[0]
+                test_dt_end= df[datetime_col].sort_values(ignore_index=True,ascending=True).tolist()[-1]
+                
+                # datetime.fromtimestamp(test_dt)
+                date_start = datetime.strptime(test_dt_start, '%Y-%m-%d %H:%M').date()
+                date_end = datetime.strptime(test_dt_end, '%Y-%m-%d %H:%M').date()
+                return (date_end- date_start).days
+            elif df[datetime_col].dtype=='int64':
+                test_dt_start= df[datetime_col].sort_values(ignore_index=True,ascending=True).tolist()[0]
+                test_dt_end= df[datetime_col].sort_values(ignore_index=True,ascending=True).tolist()[-1]
+                date_start = datetime.strptime(str(test_dt_start), '%Y%m%d')
+                date_end = datetime.strptime(str(test_dt_end), '%Y%m%d')
+                return (date_end- date_start).days
+    ## 주차 계산 함수
+    def calculate_week(date, base_date, base_week):
+            base_date_timestamp = pd.Timestamp(base_date)
+
+            # 날짜 차이 계산
+            delta_days = (date - base_date_timestamp).dt.days
+
+            # 기준 주차에서 날짜 차이를 주 단위로 변환
+            week = base_week + delta_days // 7
+            return week
     
 class ModelTest():
     # 예시 데이터 (training_table과 target_table이 이미 존재한다고 가정)
