@@ -1,0 +1,2 @@
+서울특별시_열린데이터 광장 Open API
+https://data.seoul.go.kr/together/guide/useGuide.do
