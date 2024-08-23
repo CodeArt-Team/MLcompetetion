@@ -20,60 +20,409 @@
 📌 Author : Forrest D Park 
 📌 Update : 
     2024.08.07 by pdg : DataInfo 함수 생성
+    2024.08.23  by pdg : DataInfo -> 시계열 데이터 일때 그래프 시각화 하는 기능 추가 
+        - 분석때 배운거 다 플랏할수있도록 함수화 하자. 
 
 '''
 
 def imd(image_address,width =700, height=300):
     print(f'<br><img src = "{image_address}" width="{width}" height="{height}"/><br>')
-
 def colored_text(text, color='default', bold=False):
-        '''
-        #### 예시 사용법
-        print(colored_text('저장 하지 않습니다.', 'red'))
-        print(colored_text('저장 합니다.', 'green'))
-        default,red,green,yellow,blue, magenta, cyan, white, rest
-        '''
-        colors = {
-            'default': '\033[99m',
-            'red': '\033[91m',
-            'green': '\033[92m',
-            'yellow': '\033[93m',
-            'blue': '\033[94m',
-            'magenta': '\033[95m', #보라색
-            'cyan': '\033[96m',
-            'white': '\033[97m',
-            'bright_black': '\033[90m',  # 밝은 검정색 (회색)
-            'bright_red': '\033[91m',  # 밝은 빨간색
-            'bright_green': '\033[92m',  # 밝은 초록색
-            'bright_yellow': '\033[93m',  # 밝은 노란색
-            'bright_blue': '\033[94m',  # 밝은 파란색
-            'bright_magenta': '\033[95m',  # 밝은 보라색
-            'bright_cyan': '\033[96m',  # 밝은 청록색
-            'bright_white': '\033[97m',  # 밝은 흰색
-            'reset': '\033[0m'
-        }
-        color_code = colors.get(color, colors['default'])
-        bold_code = '\033[1m' if bold else ''
-        reset_code = colors['reset']
-        
-        return f"{bold_code}{color_code}{text}{reset_code}"
-def blue(str,b=False):return colored_text(str,'blue',bold=b)
-def yellow(str,b=False):return colored_text(str,'yellow',bold=b)
-def red(str,b=False):return colored_text(str,'red',bold=b)
-def green(str,b=False):return colored_text(str,'green',bold=b)
-def magenta(str,b=False):return colored_text(str,'magenta',bold=b)
-def Explaination(title,explain):
-    title =str(title).upper()
-    print(colored_text(f"___ 🟡 {title}. ",'green',bold=True))
-    print(colored_text(f"______ 📌 {explain}",'yellow'))
+    '''
+    #### 예시 사용법
+    print(colored_text('저장 하지 않습니다.', 'red'))
+    print(colored_text('저장 합니다.', 'green'))
+    default,red,green,yellow,blue, magenta, cyan, white, rest
+    '''
+    colors = {
+        'default': '\033[99m',
+        'red': '\033[91m',
+        'green': '\033[92m',
+        'yellow': '\033[93m',
+        'blue': '\033[94m',
+        'magenta': '\033[95m',  # 보라색
+        'cyan': '\033[96m',
+        'white': '\033[97m',
+        'black': '\033[30m',  # 검은색
+        'bright_black': '\033[90m',  # 밝은 검정색 (회색)
+        'bright_red': '\033[91m',  # 밝은 빨간색
+        'bright_green': '\033[92m',  # 밝은 초록색
+        'bright_yellow': '\033[93m',  # 밝은 노란색
+        'bright_blue': '\033[94m',  # 밝은 파란색
+        'bright_magenta': '\033[95m',  # 밝은 보라색
+        'bright_cyan': '\033[96m',  # 밝은 청록색
+        'bright_white': '\033[97m',  # 밝은 흰색
+        'reset': '\033[0m'
+    }
 
+    # 무지개 색 추가 (RGB 값 사용)
+    rainbow_colors = [
+        '\033[38;2;255;0;0m',  # 빨간색
+        '\033[38;2;255;127;0m',  # 주황색
+        '\033[38;2;255;255;0m',  # 노란색
+        '\033[38;2;0;255;0m',  # 초록색
+        '\033[38;2;0;255;127m',  # 청록색
+        '\033[38;2;0;0;255m',  # 파란색
+        '\033[38;2;127;0;255m',  # 보라색
+    ]
 
+    # 무지개 색 추가 (색상 명칭)
+    colors.update({
+        'rainbow_red': rainbow_colors[0],
+        'rainbow_orange': rainbow_colors[1],
+        'rainbow_yellow': rainbow_colors[2],
+        'rainbow_green': rainbow_colors[3],
+        'rainbow_cyan': rainbow_colors[4],
+        'rainbow_blue': rainbow_colors[5],
+        'rainbow_magenta': rainbow_colors[6],
+    })
+
+    color_code = colors.get(color, colors['default'])
+    bold_code = '\033[1m' if bold else ''
+    reset_code = colors['reset']
+
+    return f"{bold_code}{color_code}{text}{reset_code}"
+def blue(str, b=False):return colored_text(str, 'blue', bold=b)
+def yellow(str, b=False):return colored_text(str, 'yellow', bold=b)
+def red(str, b=False):return colored_text(str, 'red', bold=b)
+def green(str, b=False):return colored_text(str, 'green', bold=b)
+def magenta(str, b=False):return colored_text(str, 'magenta', bold=b)
+# 무지개 색 함수 추가
+def rainbow_red(str, b=False):return colored_text(str, 'rainbow_red', bold=b)
+def rainbow_orange(str, b=False):return colored_text(str, 'rainbow_orange', bold=b)
+def rainbow_yellow(str, b=False):return colored_text(str, 'rainbow_yellow', bold=b)
+def rainbow_green(str, b=False):return colored_text(str, 'rainbow_green', bold=b)
+def rainbow_cyan(str, b=False):return colored_text(str, 'rainbow_cyan', bold=b)
+def rainbow_blue(str, b=False):return colored_text(str, 'rainbow_blue', bold=b)
+def rainbow_magenta(str, b=False):return colored_text(str, 'rainbow_magenta', bold=b)
+# 검은색 함수 추가
+def black(str, b=False):return colored_text(str, 'black', bold=b)
+def rainbow_text(text,bold =False):
+    """텍스트를 무지개색으로 한 글자씩 출력합니다."""
+    rainbow_colors = [
+        '\033[38;2;255;0;0m',  # 빨간색
+        '\033[38;2;255;127;0m',  # 주황색
+        '\033[38;2;255;255;0m',  # 노란색
+        '\033[38;2;0;255;0m',  # 초록색
+        '\033[38;2;0;255;127m',  # 청록색
+        '\033[38;2;0;0;255m',  # 파란색
+        '\033[38;2;127;0;255m',  # 보라색
+    ]
+    colored_text = ''
+    for i, char in enumerate(text):
+        colored_text += rainbow_colors[i % len(rainbow_colors)] + char
+    colored_text += '\033[0m'  # 색상 초기화
+    bold_code = '\033[1m' if bold else ''
+    return f"{bold_code}{colored_text}"
 ### Common  library install 
 # !pip install numpy
 # !pip install matplotlib
 # !pip install pandas
 
+def Analysis_title(Title):
+    random_imoticon = ["🙀","👻","😜","🤗","🙄","🤑","🤖"]
+    import numpy as np
+    import random
+    imo = random_imoticon[random.randrange(1,len(random_imoticon))]
+    print(rainbow_green(f"✻✻✻✻______{imo*1} {Title} {imo*1}______✻✻✻✻",True))
 
+def df_display_centered(df):
+    from IPython.display import display, HTML
+    display(HTML('<div style="text-align: center; margin-left: 50px;">{}</div>'.format(df.to_html().replace('<table>', '<table style="margin: 0 auto;">'))))
+class DataPreprocessing:
+    def __init__(self) -> None:
+        pass
+    
+    def key_selector(data_dict,num=0):
+
+        data_num= sorted(data_dict.keys())[num]
+        
+        return data_dict[data_num]
+    
+    def data_fetch(data_folder_path,start,end):
+        import os,pandas as pd
+        from tqdm import tqdm  # 진행 상황 표시 라이브러리
+        data_dict ={}
+        count = 1
+        with tqdm(total=100, desc=green("Data File 불러오는 중..",True), bar_format="{desc}:{percentage:3.0f}%|{bar}| {n_fmt}/{total_fmt} [elapsed: {elapsed} remaining: {remaining}]", colour='green') as pbar:
+            for i in (os.listdir(data_folder_path)):
+                if int(i.split(".")[0]) in range(start,end):
+                    # print(int(i.split(".")[0])s)
+                    data_dict[f"{i}"]= pd.read_excel(os.path.join(data_folder_path, i))
+                    pbar.update(count) 
+                    count +=3
+
+            #else : 
+                #for i in sorted(data_dict.keys()):print(yellow(f"  {i}"))
+                
+
+        return data_dict
+    
+    def plotSetting(pltStyle="seaborn-v0_8"):
+        '''
+        # Fucntion Description : Plot 한글화 Setting
+        # Date : 2024.06.05
+        # Author : Forrest D Park 
+        # update : 
+        '''
+
+        
+        import warnings ;warnings.filterwarnings('ignore')
+        import sys ;sys.path.append("../../../")
+        import os 
+        print(blue(f"◎ 현재 경로의 폴더 목록 --",True))
+        for i,file in enumerate(os.listdir(os.getcwd())):
+            if os.path.isdir(os.path.join(os.getcwd(),file)):
+                print(yellow(f"  {i}. {str(os.path.join(os.getcwd(),file))}"))
+        sys.path.append("../")
+        sys.path.append("../../")
+        
+        print(blue(f"◎ 주피터 가상환경 체크 : {os.environ['CONDA_DEFAULT_ENV']}",True))
+        print(blue(f"◎ Python 설치 경로:{sys.executable}",True))
+        print(blue(f"◎ Graph 한글화 Setting",True))
+        
+  
+        # graph style seaborn
+        import matplotlib.pyplot as plt # visiulization
+        import platform
+        from matplotlib import font_manager, rc # rc : 폰트 변경 모듈font_manager : 폰트 관리 모듈
+        plt.style.use(pltStyle)
+        plt.rcParams['axes.unicode_minus'] = False# unicode 설정
+        if platform.system() == 'Darwin': rc('font', family='AppleGothic') # os가 macos
+        elif platform.system() == 'Windows': # os가 windows
+            path = 'c:/Windows/Fonts/malgun.ttf' 
+            font_name = font_manager.FontProperties(fname=path).get_name()
+            rc('font', family=font_name)
+        else:
+            print("Unknown System")
+        print(colored_text("◎ OS platform 한글 세팅완료",'blue',bold=True))
+        # print(rainbow_green(f"✻✻✻✻______{imo*1} {Title} {imo*1}______✻✻✻✻",True))
+
+    
+    
+    def dataInfo2(df, replace_Nan=False, PrintOutColnumber = 0,nanFillValue=0, graphPlot=True):
+        import pandas as pd
+        column_count = len(df.columns)
+        row_count = len(df.index)
+        nul_count  = df.isnull().sum().sum()
+        value_kind_limit =10
+        under_limit_columns =[]
+        if PrintOutColnumber ==0 :
+            PrintOutColnumber = column_count
+        print(yellow(f" ◎ Column  : {column_count} 개 "))
+        for num,i in enumerate(df.columns.tolist()):
+            if num%5 != 0: 
+                print(rainbow_orange(f"   {i}"), end=", ")
+            else:
+                print(rainbow_orange(f"\n   {i}"), end=", ")
+        else:print("")
+        print(yellow(f" ◎ Row size    : {row_count} 개"))
+        print(yellow(f" ◎ Null count   : {nul_count} 개"))
+        
+        
+        for idx, col in enumerate(df.columns):
+            if df[f"{col}"].isnull().sum():
+                print(f"   => {idx}번째.[{col}]컬럼 : ",f"null {df[f'{col}'].isnull().sum()} 개,\t not null {df[f'{col}'].notnull().sum()} 개")
+                ## Null data fill
+                if replace_Nan : ## nan 을 0 으로 대체 
+                    df=df[col].fillna(value=nanFillValue, inplace=True)  
+        print(yellow(" ◎ 칼럼별 데이터 중복체크"))
+
+        for idx, col in enumerate(df.dtypes.keys()):
+            value_counts = df[col].value_counts()
+            under_limit_columns.append(col)
+            print(yellow(f"   □ {idx+1}번째 칼럼 \" {col}\"  타입 {df.dtypes[col]})"),\
+                            red(f"\n    {len(df[col].unique())}"),\
+                            green(f"\t/{len(df[col])} ")+ "\t[uniq/raw]",\
+            )
+            
+            ### Value count 값 분포 확인
+
+            check_df = pd.DataFrame(
+                    {
+                        f'\"{col}\" 칼럼의 중복값': value_counts.index.tolist(),
+                        '개수분포': value_counts.values.tolist()
+                    },
+                    index=range(1, len(value_counts) + 1)
+)
+
+            df_display_centered(check_df.head(10))
+            
+            
+            # 그래프 생성
+            import matplotlib.pyplot as plt
+            import seaborn as sns
+            
+            if len(check_df.index) <10 :
+                plt.figure(figsize=(8, 6))  # 그래프 크기 설정
+                labels = value_counts.index.tolist()
+                for i, label in enumerate(labels):
+                    
+                    if len(str(label)) > 10:
+                        labels[i] = label[:10] + "..."
+                colors = sns.color_palette("pastel", len(value_counts.values)) 
+                # 퍼센트와 실제 수치 함께 표시
+                def make_autopct(values):
+                    def my_autopct(pct):
+                        total = sum(values)
+                        val = int(round(pct * total / 100.0))
+                        return f'{pct:.1f}% ({val:d})'
+                    return my_autopct
+
+                plt.pie(value_counts.values, labels=labels, autopct=make_autopct(value_counts.values), startangle=90, colors=colors)
+                plt.title(f"{col} 컬럼 값 분포 (파이 차트)", fontsize=13)
+                plt.axis('equal')  # 파이 차트를 원형으로 유지
+                plt.show()  # 그래프 출력
+            else:
+                plt.figure(figsize=(14, 4))  # 그래프 크기 설정
+                sns.barplot(x=value_counts.index, y=value_counts.values, palette="viridis") 
+                plt.title(f"{col} 컬럼 값 분포",fontsize=13)  # 그래프 제목 설정
+                # x축 레이블 길이가 10 글자 이상이면 ...으로 표현
+                for label in plt.gca().get_xticklabels():
+                    if len(label.get_text()) > 10:
+                        label.set_text(label.get_text()[:10] + "...")
+                plt.ylabel("개수")  # y축 레이블 설정
+                plt.xticks(rotation=45)  # x축 레이블 회전
+                plt.tight_layout()  # 레이블 간 간격 조정
+                plt.show()  # 그래프 출력
+
+        else: 
+            print(red("\t[RESULT]"),"🙀🙀🙀"*10)
+            print(yellow(f"\t🟦{value_kind_limit}개이하의 값 종류를 가지는 칼럼 "))
+            # print(red(str(under_limit_columns)))
+            for col in under_limit_columns:
+                print("\t\t-",yellow(f"{col}:{len(df[col].unique())}: {df[col].unique().tolist()}"))
+            else:
+                
+                print("\t",red(f"총 {len(under_limit_columns)}개"))
+                print(rainbow_cyan(" ---- data frame 의 정보 조사 완료 -----}",True))
+                return under_limit_columns
+            
+
+    
+    
+    
+    def column_hist(df,col):
+        import pandas as pd
+        import matplotlib.pyplot as plt
+        import seaborn as sns
+        import numpy as np
+        num_cols = df.select_dtypes(include=np.number).columns  # 숫자형 칼럼만 선택
+
+        if col in num_cols:
+            plt.figure(figsize=(5, 4))
+            # 히스토그램과 KDE 동시에 그리기
+            sns.histplot(df[col], kde=True, bins=30)
+            plt.title(f"{col} -Histogram", fontsize=15)
+            plt.xlabel(col, fontsize=12)
+            plt.ylabel("Density", fontsize=12)
+             # 기술 통계치 계산
+            mean_val = df[col].mean()
+            median_val = df[col].median()
+            std_val = df[col].std()
+            min_val = df[col].min()
+            max_val = df[col].max()
+
+            # 그래프에 기술 통계치 추가
+            stats_text = (
+            
+            f"""평균값 : {mean_val:<10.1f}
+            중앙값 : {median_val:<10.1f}
+            표준편차: {std_val:<10.1f}
+            최소값 : {min_val:<10.1f}
+            최대값 : {max_val:<10.1f}"""
+            )
+            
+            # 텍스트 위치 조정 (좌하단)
+            plt.text(x=0.95, y=0.95, s=stats_text, fontsize=8, 
+                    ha='right', va='top', transform=plt.gca().transAxes, 
+                    bbox=dict(facecolor='white', alpha=0.7))
+            plt.show()
+        else: 
+            print(colored_text("숫자형데이터가 아닙니다",'red',bold=True))
+            # sns.histplot(df[col], kde=True, bins=len(df[col].unique()))
+            # plt.xticks(rotation=45)  # x축 라벨을 45도 기울입니다
+            # plt.show()
+
+    # 각 컬럼별 0 값 비율,갯수보기
+    def column_zero_find(data):
+        import matplotlib.pyplot as plt
+        dataCount = data.columns.shape[0]
+        for i in range(dataCount):
+
+            data.columns[i]
+            count_zero = (data[data.columns[i]] == 0).sum()
+            count_non_zero = (data[data.columns[i]] != 0).sum()
+            sizes = [count_zero, count_non_zero]
+            labels = [f'{count_zero}개\n0인 데이터', f'{count_non_zero}개\n0이 아닌 데이터']
+            colors = ['#ff9999','#66b3ff']
+            
+            #파이차트 생성
+            plt.figure(figsize=(3, 3))
+            plt.title(f"{data.columns[i]}컬럼 0비율")
+            plt.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', startangle=140)
+            plt.axis('equal')
+            plt.show()
+
+    # 각 컬럼별 상관도 높은순으로 뽑기
+    def show_corr(data,count):
+        import numpy as np
+        data2 = data.select_dtypes(include=np.number).columns
+        filtered_corr = data2.corr()
+        for i in range(len(filtered_corr.columns)):
+            abs_values = filtered_corr[filtered_corr.columns[i]].abs()
+
+            top_values = abs_values.nlargest(count)
+            print(f"{filtered_corr.columns[i]} 컬럼의 상관계수 탑 5\n\n",top_values[0:count],"\n")
+    
+    
+        ## 농가별로 데이터 나누기 
+    def seperate_col_data(df,colname):
+        # df  =out
+        # colname ='시설아이디'
+        uniq_of_col_data = df[colname].unique().tolist()
+        print(yellow(f" {colname}에는 {len(uniq_of_col_data)} 종류의 데이터 가있습니다. "))
+        seperated_data = {}
+        for i in uniq_of_col_data:
+            seperated_data[i] = df[df[colname]==i] 
+        data_shapes=[seperated_data[i].shape for i in uniq_of_col_data]
+        
+        print(yellow(f" 기존의 data 를 "))
+        for (i,j) in zip(list(seperated_data.keys()),data_shapes):
+            print(yellow(f"  {i} : {j}"))
+        else:print(yellow(f" 로 쪼갭니다"))
+        
+        # print(yellow(f"{}"))
+        # return seperated_data
+    ## 농사기간 계산
+    def calc_duration(df, datetime_col):
+        from datetime import datetime
+        if datetime_col in df.columns :
+            if df[datetime_col].dtype=='O':
+                test_dt_start= df[datetime_col].sort_values(ignore_index=True,ascending=True).tolist()[0]
+                test_dt_end= df[datetime_col].sort_values(ignore_index=True,ascending=True).tolist()[-1]
+                
+                # datetime.fromtimestamp(test_dt)
+                date_start = datetime.strptime(test_dt_start, '%Y-%m-%d %H:%M').date()
+                date_end = datetime.strptime(test_dt_end, '%Y-%m-%d %H:%M').date()
+                return (date_end- date_start).days
+            elif df[datetime_col].dtype=='int64':
+                test_dt_start= df[datetime_col].sort_values(ignore_index=True,ascending=True).tolist()[0]
+                test_dt_end= df[datetime_col].sort_values(ignore_index=True,ascending=True).tolist()[-1]
+                date_start = datetime.strptime(str(test_dt_start), '%Y%m%d')
+                date_end = datetime.strptime(str(test_dt_end), '%Y%m%d')
+                return (date_end- date_start).days
+    ## 주차 계산 함수
+    def calculate_week(date, base_date, base_week):
+            base_date_timestamp = pd.Timestamp(base_date)
+
+            # 날짜 차이 계산
+            delta_days = (date - base_date_timestamp).dt.days
+
+            # 기준 주차에서 날짜 차이를 주 단위로 변환
+            week = base_week + delta_days // 7
+            return week
+    
 class DataAcquisition():
     def selenium_APIdata_get(endpoint_base,encode_key,pageNum=1,Rows=1):
         from urllib.parse import urlencode,unquote
@@ -230,266 +579,6 @@ class Visualization():
         # titles = ['사전테스트 생육데이터', '환경 데이터 B', '환경 데이터 C', '환경 데이터 D', '환경 데이터 E']
         # plot_boxplots(datasets, titles)
 
-class DataPreprocessing:
-    def __init__(self) -> None:
-        pass
-    def data_fetch(data_folder_path):
-        import os,pandas as pd
-        from tqdm import tqdm  # 진행 상황 표시 라이브러리
-        data_dict ={}
-        for i in tqdm(os.listdir("./데이터파일")):
-
-            if int(i.split(".")[0]) in range(21,29):
-               
-                # print(int(i.split(".")[0]))
-                data_dict[f"{i}"]= pd.read_excel(os.path.join("./데이터파일", i))
-                
-        else : 
-            for i in sorted(data_dict.keys()):print(yellow(f"  {i}"))
-        return data_dict
-    
-    def plotSetting(pltStyle="seaborn-v0_8", Title = ""):
-        '''
-        # Fucntion Description : Plot 한글화 Setting
-        # Date : 2024.06.05
-        # Author : Forrest D Park 
-        # update : 
-        '''
-
-        
-        import warnings ;warnings.filterwarnings('ignore')
-        import sys ;sys.path.append("../../../")
-        import os 
-        print(blue(f"◎ 현재 경로의 파일들 목록 --",True))
-        for i,file in enumerate(os.listdir(os.getcwd())):
-            print(yellow(f"  {i}. {file}"))
-        sys.path.append("../")
-        sys.path.append("../../")
-        random_imoticon = ["🙀","👻","😜","🤗","🙄","🤑","🤖"]
-        import numpy as np
-        import random
-        
-        print(blue(f"◎ 주피터 가상환경 체크 : {os.environ['CONDA_DEFAULT_ENV']}",True))
-        print(blue(f"◎ Python 설치 경로:{sys.executable}",True))
-
-        print(blue(f"◎ Graph 한글화 Setting",True))
-        
-        imo = random_imoticon[random.randrange(1,len(random_imoticon))]
-        # graph style seaborn
-        import matplotlib.pyplot as plt # visiulization
-        import platform
-        from matplotlib import font_manager, rc # rc : 폰트 변경 모듈font_manager : 폰트 관리 모듈
-        plt.style.use(pltStyle)
-        plt.rcParams['axes.unicode_minus'] = False# unicode 설정
-        if platform.system() == 'Darwin': rc('font', family='AppleGothic') # os가 macos
-        elif platform.system() == 'Windows': # os가 windows
-            path = 'c:/Windows/Fonts/malgun.ttf' 
-            font_name = font_manager.FontProperties(fname=path).get_name()
-            rc('font', family=font_name)
-        else:
-            print("Unknown System")
-        print(colored_text("______👏👏 OS platform 한글 세팅완료",'magenta',bold=True))
-        print(yellow(f"✻✻✻✻______{imo*1} {Title} {imo*1}______✻✻✻✻",True))
-
-    def dataInfo(df, replace_Nan=False, PrintOutColnumber = 0,nanFillValue=0, graphPlot=True):
-        column_count = len(df.columns)
-        row_count = len(df.index)
-        nul_count  = df.isnull().sum().sum()
-        value_kind_limit =10
-        under_limit_columns =[]
-        if PrintOutColnumber ==0 :
-            PrintOutColnumber = column_count
-        print(yellow(f"- column 수 : {column_count}"))
-        print(df.columns)
-        print(yellow(f"- row 수    : {row_count}"))
-        print(yellow(f"- null 수   : {nul_count}"))
-        
-        
-        for idx, col in enumerate(df.columns):
-            if df[f"{col}"].isnull().sum():
-                print(f"   => {idx}번째.[{col}]컬럼 : ",f"null {df[f'{col}'].isnull().sum()} 개,\t not null {df[f'{col}'].notnull().sum()} 개")
-                ## Null data fill
-                if replace_Nan : ## nan 을 0 으로 대체 
-                    df=df[col].fillna(value=nanFillValue, inplace=True)  
-        print(yellow("- 칼럼별 데이터 중복체크"))
-        print( yellow("idx.columName |\t\t\t\t |Colum Info(dtype)|** "))
-        print( "",yellow("--"*len("columIdx |\t\t\t\t **|Col(dtype)|** ")))
-        for idx, col in enumerate(df.dtypes.keys()):
-            if idx < PrintOutColnumber: ### -> 출력할 칼럼수 제한 
-                if len(f"\t{idx}.[{col}({df.dtypes[col]})]:")<25 : ### 이쁘게 출력하기 위해 칼럼 이름 글자수 25개 이하 인것은 탭을 두번만 함. 
-                    value_counts = df[col].value_counts()
-                    if len(df[col].unique())<10: #중복값이 10 이하일경우 value count 출력
-                        under_limit_columns.append(col)
-                        print(yellow(f"{idx}.[{col}({df.dtypes[col]})]:\t\t"),\
-                            red(f"{len(df[col].unique())}"),\
-                            green(f"\t/{len(df[col])} ")+ "\t[uniq/raw]",\
-                            blue(f"---📌값의 종류가 {value_kind_limit}개 미만 입니다. "),\
-                             sep=" ")
-                        ### Value count 값 분포 확인
-                        print("\t\t",magenta("--"*20))
-                        for order,(i,v) in enumerate(zip(value_counts.index.tolist(), value_counts.values.tolist())):
-                            print(magenta(f"\t\t |-[{order}] {i} : \t{v}"))
-                        print("\t\t",magenta("--"*20))
-                        if graphPlot :DataPreprocessing.column_hist(df,col)
-
-                    else: 
-                        print(yellow(f"{idx}.[{col}({df.dtypes[col]})]:\t\t"),\
-                        red(f"{len(df[col].unique())}"),f"\t/{len(df[col])} \t[uniq/raw]",\
-                             sep=" ")
-                        if graphPlot :DataPreprocessing.column_hist(df,col)
-
-                        
-                    
-                else:### 이쁘게 출력하기 위해 칼럼 이름 글자수 25개 이상 인것은 탭을 두번만 함. 
-                    
-                    value_counts = df[col].value_counts()
-                    if len(df[col].unique())<10: #중복값이 10 이하일경우 value count 출력
-                        under_limit_columns.append(col)
-                        print(yellow(f"{idx}.[{col}({df.dtypes[col]})]:\t\t"),\
-                        red(f"{len(df[col].unique())}"),\
-                        green(f"\t/{len(df[col])} ")+ "\t[uniq/raw]",\
-                            blue(f"---📌값의 종류가 {value_kind_limit}개 미만 입니다. "),\
-                             sep=" ")
-                        print("\t\t",magenta("--"*20))
-                        for order,(i,v) in enumerate(zip(value_counts.index.tolist(), value_counts.values.tolist())):
-                            print(magenta(f"\t\t |-[{order}] {i} : \t{v}"))
-                        print("\t\t",magenta("--"*20))
-                        if graphPlot :DataPreprocessing.column_hist(df,col)
-
-
-        else: 
-            print(f"\t ...etc (추가로 {len(df.dtypes.keys())-PrintOutColnumber}개의 칼럼이 있습니다 )")
-            print(red("\t[RESULT]"),"🙀🙀🙀"*10)
-            print(yellow(f"\t🟦{value_kind_limit}개이하의 값 종류를 가지는 칼럼 "))
-            # print(red(str(under_limit_columns)))
-            for col in under_limit_columns:
-                print("\t\t-",yellow(f"{col}:{len(df[col].unique())}: {df[col].unique().tolist()}"))
-            else:
-                
-                print("\t",red(f"총 {len(under_limit_columns)}개"))
-                return under_limit_columns
-        
-    def column_hist(df,col):
-        import pandas as pd
-        import matplotlib.pyplot as plt
-        import seaborn as sns
-        import numpy as np
-        num_cols = df.select_dtypes(include=np.number).columns  # 숫자형 칼럼만 선택
-
-        if col in num_cols:
-            plt.figure(figsize=(5, 4))
-            # 히스토그램과 KDE 동시에 그리기
-            sns.histplot(df[col], kde=True, bins=30)
-            plt.title(f"{col} -Histogram", fontsize=15)
-            plt.xlabel(col, fontsize=12)
-            plt.ylabel("Density", fontsize=12)
-             # 기술 통계치 계산
-            mean_val = df[col].mean()
-            median_val = df[col].median()
-            std_val = df[col].std()
-            min_val = df[col].min()
-            max_val = df[col].max()
-
-            # 그래프에 기술 통계치 추가
-            stats_text = (
-            
-            f"""평균값 : {mean_val:<10.1f}
-            중앙값 : {median_val:<10.1f}
-            표준편차: {std_val:<10.1f}
-            최소값 : {min_val:<10.1f}
-            최대값 : {max_val:<10.1f}"""
-            )
-            
-            # 텍스트 위치 조정 (좌하단)
-            plt.text(x=0.95, y=0.95, s=stats_text, fontsize=8, 
-                    ha='right', va='top', transform=plt.gca().transAxes, 
-                    bbox=dict(facecolor='white', alpha=0.7))
-            plt.show()
-        else: 
-            print(colored_text("숫자형데이터가 아닙니다",'red',bold=True))
-            # sns.histplot(df[col], kde=True, bins=len(df[col].unique()))
-            # plt.xticks(rotation=45)  # x축 라벨을 45도 기울입니다
-            # plt.show()
-
-    # 각 컬럼별 0 값 비율,갯수보기
-    def column_zero_find(data):
-        import matplotlib.pyplot as plt
-        dataCount = data.columns.shape[0]
-        for i in range(dataCount):
-
-            data.columns[i]
-            count_zero = (data[data.columns[i]] == 0).sum()
-            count_non_zero = (data[data.columns[i]] != 0).sum()
-            sizes = [count_zero, count_non_zero]
-            labels = [f'{count_zero}개\n0인 데이터', f'{count_non_zero}개\n0이 아닌 데이터']
-            colors = ['#ff9999','#66b3ff']
-            
-            #파이차트 생성
-            plt.figure(figsize=(3, 3))
-            plt.title(f"{data.columns[i]}컬럼 0비율")
-            plt.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', startangle=140)
-            plt.axis('equal')
-            plt.show()
-
-    # 각 컬럼별 상관도 높은순으로 뽑기
-    def show_corr(data,count):
-        import numpy as np
-        data2 = data.select_dtypes(include=np.number).columns
-        filtered_corr = data2.corr()
-        for i in range(len(filtered_corr.columns)):
-            abs_values = filtered_corr[filtered_corr.columns[i]].abs()
-
-            top_values = abs_values.nlargest(count)
-            print(f"{filtered_corr.columns[i]} 컬럼의 상관계수 탑 5\n\n",top_values[0:count],"\n")
-    
-    
-        ## 농가별로 데이터 나누기 
-    def seperate_col_data(df,colname):
-        # df  =out
-        # colname ='시설아이디'
-        uniq_of_col_data = df[colname].unique().tolist()
-        print(yellow(f" {colname}에는 {len(uniq_of_col_data)} 종류의 데이터 가있습니다. "))
-        seperated_data = {}
-        for i in uniq_of_col_data:
-            seperated_data[i] = df[df[colname]==i] 
-        data_shapes=[seperated_data[i].shape for i in uniq_of_col_data]
-        
-        print(yellow(f" 기존의 data 를 "))
-        for (i,j) in zip(list(seperated_data.keys()),data_shapes):
-            print(yellow(f"  {i} : {j}"))
-        else:print(yellow(f" 로 쪼갭니다"))
-        
-        # print(yellow(f"{}"))
-        # return seperated_data
-    ## 농사기간 계산
-    def calc_duration(df, datetime_col):
-        from datetime import datetime
-        if datetime_col in df.columns :
-            if df[datetime_col].dtype=='O':
-                test_dt_start= df[datetime_col].sort_values(ignore_index=True,ascending=True).tolist()[0]
-                test_dt_end= df[datetime_col].sort_values(ignore_index=True,ascending=True).tolist()[-1]
-                
-                # datetime.fromtimestamp(test_dt)
-                date_start = datetime.strptime(test_dt_start, '%Y-%m-%d %H:%M').date()
-                date_end = datetime.strptime(test_dt_end, '%Y-%m-%d %H:%M').date()
-                return (date_end- date_start).days
-            elif df[datetime_col].dtype=='int64':
-                test_dt_start= df[datetime_col].sort_values(ignore_index=True,ascending=True).tolist()[0]
-                test_dt_end= df[datetime_col].sort_values(ignore_index=True,ascending=True).tolist()[-1]
-                date_start = datetime.strptime(str(test_dt_start), '%Y%m%d')
-                date_end = datetime.strptime(str(test_dt_end), '%Y%m%d')
-                return (date_end- date_start).days
-    ## 주차 계산 함수
-    def calculate_week(date, base_date, base_week):
-            base_date_timestamp = pd.Timestamp(base_date)
-
-            # 날짜 차이 계산
-            delta_days = (date - base_date_timestamp).dt.days
-
-            # 기준 주차에서 날짜 차이를 주 단위로 변환
-            week = base_week + delta_days // 7
-            return week
-    
 class ModelTest():
     # 예시 데이터 (training_table과 target_table이 이미 존재한다고 가정)
     # training_table = pd.DataFrame(...)
