@@ -1,0 +1,2 @@
+개발지원센터_총조사 주요지표(인구, 가구, 주택 등)
+https://sgis.kostat.go.kr/developer/html/newOpenApi/api/dataApi/ready.html
