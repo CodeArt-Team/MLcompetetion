@@ -107,6 +107,87 @@ class DataAcquisition():
         data_json = json.loads(data)
 
         pprint(data_json["response"])
+    
+    def request_APIData_get():
+        ## Author : 지환 팍
+        import requests
+        import logging
+        import ssl
+        import pandas as pd
+        from requests.adapters import HTTPAdapter
+        from requests.packages.urllib3.util.ssl_ import create_urllib3_context
+
+        # 로깅 설정
+        logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+        # SSL 컨텍스트 생성
+        ctx = create_urllib3_context()
+        ctx.set_ciphers('DEFAULT@SECLEVEL=1')
+
+        # 커스텀 어댑터 클래스 정의
+        class CustomAdapter(HTTPAdapter):
+            def init_poolmanager(self, *args, **kwargs):
+                kwargs['ssl_context'] = ctx
+                return super(CustomAdapter, self).init_poolmanager(*args, **kwargs)
+
+        # 세션 생성 및 어댑터 설정
+        session = requests.Session()
+        session.mount('https://', CustomAdapter())
+
+        # API 엔드포인트 URL
+        url = "https://apis.data.go.kr/B190001/cardFranchisesV3/cardV3"
+
+        # 인증키
+        api_key = "1gpaK4ticgtOqnE5t7cIOQtKz7kP4Lu3HbyACKUWni5Ag/yj9cl9uueNXK20lnGIEqPnYSMiSOmR61YL9xS40g=="
+
+        # 요청 파라미터
+        params = {
+            "serviceKey": api_key,
+            "page": "1",
+            "perPage": "3000"
+        }
+
+        # 요청 헤더
+        headers = {
+            "accept": "*/*",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36"
+        }
+
+        try:
+            # GET 요청 보내기
+            response = session.get(url, params=params, headers=headers, timeout=30)
+            
+            # 응답 상태 확인
+            response.raise_for_status()
+            
+            # JSON 형식으로 데이터 파싱
+            data = response.json()
+            
+            # 데이터 추출 및 DataFrame 생성
+            items = data.get('data', [])
+            if items:
+                df = pd.DataFrame(items)
+                logging.info("DataFrame 생성 완료")
+                logging.info(f"DataFrame shape: {df.shape}")
+                logging.info("\nDataFrame 첫 5행:")
+                logging.info(df.head().to_string())
+            else:
+                logging.warning("추출된 데이터 항목이 없습니다.")
+                logging.info("응답 데이터:")
+                logging.info(json.dumps(data, indent=2, ensure_ascii=False))
+
+        except requests.exceptions.RequestException as e:
+            logging.error(f"요청 중 오류 발생: {e}")
+            if hasattr(e, 'response') and e.response is not None:
+                logging.error(f"응답 상태 코드: {e.response.status_code}")
+                logging.error(f"응답 내용: {e.response.text}")
+            else:
+                logging.error("응답 객체가 없습니다.")
+        except ValueError as e:
+            logging.error(f"JSON 디코딩 오류: {e}")
+            logging.error(f"응답 내용: {response.text}")
+        except Exception as e:
+            logging.error(f"예상치 못한 오류 발생: {e}")
 
 class Visualization():
     
