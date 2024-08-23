@@ -233,6 +233,21 @@ class Visualization():
 class DataPreprocessing:
     def __init__(self) -> None:
         pass
+    def data_fetch(data_folder_path):
+        import os,pandas as pd
+        from tqdm import tqdm  # 진행 상황 표시 라이브러리
+        data_dict ={}
+        for i in tqdm(os.listdir("./데이터파일")):
+
+            if int(i.split(".")[0]) in range(21,29):
+               
+                # print(int(i.split(".")[0]))
+                data_dict[f"{i}"]= pd.read_excel(os.path.join("./데이터파일", i))
+                
+        else : 
+            for i in sorted(data_dict.keys()):print(yellow(f"  {i}"))
+        return data_dict
+    
     def plotSetting(pltStyle="seaborn-v0_8", Title = ""):
         '''
         # Fucntion Description : Plot 한글화 Setting
@@ -240,20 +255,24 @@ class DataPreprocessing:
         # Author : Forrest D Park 
         # update : 
         '''
-        import os
+
         
         import warnings ;warnings.filterwarnings('ignore')
         import sys ;sys.path.append("../../../")
+        import os 
+        print(blue(f"◎ 현재 경로의 파일들 목록 --",True))
+        for i,file in enumerate(os.listdir(os.getcwd())):
+            print(yellow(f"  {i}. {file}"))
         sys.path.append("../")
         sys.path.append("../../")
         random_imoticon = ["🙀","👻","😜","🤗","🙄","🤑","🤖"]
         import numpy as np
         import random
         
-        print(green(f"______ 가상환경 체크 : {os.environ['CONDA_DEFAULT_ENV']}",True))
-        print(green(f"Python 설치 경로:{sys.executable}"))
+        print(blue(f"◎ 주피터 가상환경 체크 : {os.environ['CONDA_DEFAULT_ENV']}",True))
+        print(blue(f"◎ Python 설치 경로:{sys.executable}",True))
 
-        print(green(f"______ Graph 한글화 Setting",True))
+        print(blue(f"◎ Graph 한글화 Setting",True))
         
         imo = random_imoticon[random.randrange(1,len(random_imoticon))]
         # graph style seaborn
