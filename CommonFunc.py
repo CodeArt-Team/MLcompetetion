@@ -226,7 +226,7 @@ class DataPreprocessing:
                 print(f"   => {idx}번째.[{col}]컬럼 : ",f"null {df[f'{col}'].isnull().sum()} 개,\t not null {df[f'{col}'].notnull().sum()} 개")
                 ## Null data fill
                 if replace_Nan : ## nan 을 0 으로 대체 
-                    df=df[col].fillna(value=nanFillValue, inplace=True)  
+                    df[col].fillna(value=nanFillValue, inplace=True)  
         print(yellow(" ◎ 칼럼별 데이터 중복체크"))
 
         for idx, col in enumerate(df.dtypes.keys()):
@@ -244,7 +244,7 @@ class DataPreprocessing:
                         '개수분포': value_counts.values.tolist()
                     },
                     index=range(1, len(value_counts) + 1)
-)
+    )
 
             df_display_centered(check_df.head(10))
             
@@ -256,8 +256,9 @@ class DataPreprocessing:
                 plt.figure(figsize=(8, 6))  # 그래프 크기 설정
                 labels = value_counts.index.tolist()
                 for i, label in enumerate(labels):
-                    
-                    if len(str(label)) > 10:
+                    # label을 문자열로 변환
+                    label = str(label)
+                    if len(label) > 10:
                         labels[i] = label[:10] + "..."
                 colors = sns.color_palette("pastel", len(value_counts.values)) 
                 # 퍼센트와 실제 수치 함께 표시
@@ -279,8 +280,9 @@ class DataPreprocessing:
                 plt.title(f"{col} 컬럼 값 분포",fontsize=13)  # 그래프 제목 설정
                 # x축 레이블 길이가 10 글자 이상이면 ...으로 표현
                 for label in plt.gca().get_xticklabels():
-                    if len(label.get_text()) > 10:
-                        label.set_text(label.get_text()[:10] + "...")
+                    label = str(label)
+                    if len(label) > 10:
+                        label.set_text(label[:10] + "...")
                 plt.ylabel("개수")  # y축 레이블 설정
                 plt.xticks(rotation=45)  # x축 레이블 회전
                 plt.tight_layout()  # 레이블 간 간격 조정
@@ -298,7 +300,7 @@ class DataPreprocessing:
                 print("\t",red(f"총 {len(under_limit_columns)}개"))
                 print(rainbow_cyan(" ---- data frame 의 정보 조사 완료 -----}",True))
                 return under_limit_columns
-            
+                
 
     
     
