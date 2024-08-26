@@ -201,6 +201,7 @@ class DataPreprocessing:
     
     
     def dataInfo2(df, replace_Nan=False, PrintOutColnumber = 0,nanFillValue=0, graphPlot=True):
+        ### Description  : 새운 데이터 정보 까기 함수
         import pandas as pd
         column_count = len(df.columns)
         row_count = len(df.index)
@@ -237,7 +238,6 @@ class DataPreprocessing:
             )
             
             ### Value count 값 분포 확인
-
             check_df = pd.DataFrame(
                     {
                         f'\"{col}\" 칼럼의 중복값': value_counts.index.tolist(),
@@ -247,7 +247,6 @@ class DataPreprocessing:
 )
 
             df_display_centered(check_df.head(10))
-            
             
             # 그래프 생성
             import matplotlib.pyplot as plt
@@ -273,6 +272,7 @@ class DataPreprocessing:
                 plt.title(f"{col} 컬럼 값 분포 (파이 차트)", fontsize=13)
                 plt.axis('equal')  # 파이 차트를 원형으로 유지
                 plt.show()  # 그래프 출력
+                if graphPlot :DataPreprocessing.column_hist(df,col)
             else:
                 plt.figure(figsize=(14, 4))  # 그래프 크기 설정
                 sns.barplot(x=value_counts.index, y=value_counts.values, palette="viridis") 
@@ -285,6 +285,7 @@ class DataPreprocessing:
                 plt.xticks(rotation=45)  # x축 레이블 회전
                 plt.tight_layout()  # 레이블 간 간격 조정
                 plt.show()  # 그래프 출력
+                if graphPlot :DataPreprocessing.column_hist(df,col)
 
         else: 
             print(red("\t[RESULT]"),"🙀🙀🙀"*10)
