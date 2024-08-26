@@ -282,7 +282,8 @@ class DataPreprocessing:
                 for label in plt.gca().get_xticklabels():
                     label = str(label)
                     if len(label) > 10:
-                        label.set_text(label[:10] + "...")
+                        label = label[:10] + "..."  # 변경
+                        # label.set_text(label[:10] + "...")
                 plt.ylabel("개수")  # y축 레이블 설정
                 plt.xticks(rotation=45)  # x축 레이블 회전
                 plt.tight_layout()  # 레이블 간 간격 조정
