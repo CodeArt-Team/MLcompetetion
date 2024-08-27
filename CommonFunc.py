@@ -134,10 +134,11 @@ class DataPreprocessing:
         pass
     
     def key_selector(data_dict,num=0):
-
-        data_num= sorted(data_dict.keys())[num]
-        
-        return data_dict[data_num]
+        for order,i in enumerate(sorted(data_dict.keys())):
+            print(rainbow_magenta(f"\t{order} 번째 : {i}"))
+        data_name= sorted(data_dict.keys())[num]
+        print(rainbow_yellow(f"{num}번째 데이터를 {data_name}호출합니다. "))
+        return data_dict[data_name]
     
     def data_fetch(data_folder_path,start,end):
         import os,pandas as pd
