@@ -114,10 +114,49 @@ def rainbow_text(text,bold =False):
     colored_text += '\033[0m'  # 색상 초기화
     bold_code = '\033[1m' if bold else ''
     return f"{bold_code}{colored_text}"
-### Common  library install 
-# !pip install numpy
-# !pip install matplotlib
-# !pip install pandas
+
+
+## google api 사용하여 주소 찾기 
+def find_location(test):
+    import googlemaps
+    my_key="AIzaSyB8IQ9_T6w74by5ctA2lHirC-_jHR0OmKI" ## google 
+    maps = googlemaps.Client(key=my_key)
+    
+    # 지도 그리기
+    import folium
+    from folium.features import CustomIcon
+    total_map = folium.Map(
+        location=[37.55, 126.98],
+        zoom_start=12,
+    )
+    idolbom_icoon_address = "/Users/forrestdpark/Desktop/PDG/Python_/BerryMLcompetetion/공모전/서울GovTech/돌봄서비스/idolbomi_02.png"
+
+    icon = CustomIcon(idolbom_icoon_address, icon_size=(40, 40))
+    
+    for i, center in enumerate(test['센터명']):
+        if i != 100000:
+            try:
+                geo_location = maps.geocode(center, language='ko')[0].get('geometry')  # 한글 주소 설정
+                lat = geo_location['location']['lat']
+                lng = geo_location['location']['lng']
+                address_kor = maps.geocode(center, language='ko')[0].get('formatted_address')
+                print(f"{center} 마커 추가 {maps.geocode(center, language='ko')[0].get('formatted_address')}")  # 한글 주소 출력
+                marker = folium.Marker(
+                    [lat, lng],  # 각 센터의 좌표 사용
+                    radius=20,
+                    # icon=icon,
+                    color='brown',
+                    fill=True,
+                    fill_color='red',
+                    fill_opacity=0.8,
+                    popup=f"<pre>{center} <pre>",
+                    tooltip=f"{center}<br>{address_kor}"
+                )
+                total_map.add_child(marker)  # 마커를 지도에 추가
+            except IndexError:
+                print(f"{center}의 위치를 찾을 수 없습니다.")
+            
+    return total_map
 
 def Analysis_title(Title):
     random_imoticon = ["🙀","👻","😜","🤗","🙄","🤑","🤖"]
@@ -129,6 +168,42 @@ def Analysis_title(Title):
 def df_display_centered(df):
     from IPython.display import display, HTML
     display(HTML('<div style="text-align: center; margin-left: 50px;">{}</div>'.format(df.to_html().replace('<table>', '<table style="margin: 0 auto;">'))))
+
+def data_watch_one(start_):
+    
+    DataPreprocessing.plotSetting()
+    ## Data Fetching
+    data_folder_path="./데이터파일"
+    start_data  =start_
+    end_data =start_data+1
+    Analysis_title(f"{start_data}-{end_data} 번 파일 데이터 보고 분석 by Forrest.D.Park")
+    data_dict=DataPreprocessing.data_fetch(data_folder_path,start_data,end_data)
+    for i in range(len(data_dict.keys())):
+        data_num= sorted(data_dict.keys())[i]
+        print(yellow(f"\n\n{data_num} 파일의 데이터 프레임.tail() "))
+        # 화면 가운데 정렬하여 출력
+        df_display_centered(DataPreprocessing.key_selector(data_dict, i).tail())
+        DataPreprocessing.dataInfo2(DataPreprocessing.key_selector(data_dict,i))
+    return data_dict
+
+def data_watch_range(start_,end_):
+    
+    DataPreprocessing.plotSetting(pltStyle='default')
+    ## Data Fetching
+    data_folder_path="./데이터파일"
+    start_data  =start_
+    end_data =end_
+    Analysis_title(f"{start_data}-{end_data} 번 파일 데이터 보고 분석 by Forrest.D.Park")
+    data_dict=DataPreprocessing.data_fetch(data_folder_path,start_data,end_data)
+    for i in range(len(data_dict.keys())):
+        data_num= sorted(data_dict.keys())[i]
+        print(yellow(f"\n\n{data_num} 파일의 데이터 프레임.tail() "))
+        # 화면 가운데 정렬하여 출력
+        df_display_centered(DataPreprocessing.key_selector(data_dict, i).tail())
+        # DataPreprocessing.dataInfo2(DataPreprocessing.key_selector(data_dict,i))
+    return data_dict
+
+
 class DataPreprocessing:
     def __init__(self) -> None:
         pass
