@@ -117,13 +117,15 @@ def rainbow_text(text,bold =False):
 
 
 ## google api 사용하여 주소 찾기 
-def find_location(test):
+def find_location(test,save_ok = False, save_file_path=""):
     import googlemaps
+    import pandas as pd
     my_key="AIzaSyB8IQ9_T6w74by5ctA2lHirC-_jHR0OmKI" ## google 
     maps = googlemaps.Client(key=my_key)
     
     # 지도 그리기
     import folium
+    import numpy as np
     from folium.features import CustomIcon
     total_map = folium.Map(
         location=[37.55, 126.98],
@@ -132,15 +134,21 @@ def find_location(test):
     idolbom_icoon_address = "/Users/forrestdpark/Desktop/PDG/Python_/BerryMLcompetetion/공모전/서울GovTech/돌봄서비스/idolbomi_02.png"
 
     icon = CustomIcon(idolbom_icoon_address, icon_size=(40, 40))
-    
+    df = pd.DataFrame(columns=['센터명', '위도', '경도', '주소'])
     for i, center in enumerate(test['센터명']):
         if i != 100000:
             try:
+                
                 geo_location = maps.geocode(center, language='ko')[0].get('geometry')  # 한글 주소 설정
                 lat = geo_location['location']['lat']
                 lng = geo_location['location']['lng']
                 address_kor = maps.geocode(center, language='ko')[0].get('formatted_address')
-                print(f"{center} 마커 추가 {maps.geocode(center, language='ko')[0].get('formatted_address')}")  # 한글 주소 출력
+                
+                # print(f"{center} 마커 추가 {maps.geocode(center, language='ko')[0].get('formatted_address')}")  # 한글 주소 출력
+                
+                # DataFrame에 데이터 추가 (concat 사용)
+                new_row = pd.DataFrame({'센터명': [center], '위도': [lat], '경도': [lng], '주소': [address_kor]})
+                df = pd.concat([df, new_row], ignore_index=True)
                 marker = folium.Marker(
                     [lat, lng],  # 각 센터의 좌표 사용
                     radius=20,
@@ -155,7 +163,12 @@ def find_location(test):
                 total_map.add_child(marker)  # 마커를 지도에 추가
             except IndexError:
                 print(f"{center}의 위치를 찾을 수 없습니다.")
-            
+                new_row = pd.DataFrame({'센터명': [center], '위도': [np.nan], '경도': [np.nan], '주소': [np.nan]})
+                df = pd.concat([df, new_row], ignore_index=True)
+            # DataFrame을 CSV 파일로 저장
+    if save_ok:
+        print(yellow("파일을 저장합니다."))
+        df.to_csv(save_file_path, index=False, encoding='utf-8')
     return total_map
 
 def Analysis_title(Title):
@@ -169,28 +182,28 @@ def df_display_centered(df):
     from IPython.display import display, HTML
     display(HTML('<div style="text-align: center; margin-left: 50px;">{}</div>'.format(df.to_html().replace('<table>', '<table style="margin: 0 auto;">'))))
 
-def data_watch_one(start_):
-    
-    DataPreprocessing.plotSetting()
-    ## Data Fetching
-    data_folder_path="./데이터파일"
+def data_watch_one(start_, dataInfo=False,data_folder_path="./데이터파일"):
+    ## Data Fetching range
     start_data  =start_
     end_data =start_data+1
+    
     Analysis_title(f"{start_data}-{end_data} 번 파일 데이터 보고 분석 by Forrest.D.Park")
     data_dict=DataPreprocessing.data_fetch(data_folder_path,start_data,end_data)
+    
+    ## data watching
     for i in range(len(data_dict.keys())):
         data_num= sorted(data_dict.keys())[i]
         print(yellow(f"\n\n{data_num} 파일의 데이터 프레임.tail() "))
         # 화면 가운데 정렬하여 출력
         df_display_centered(DataPreprocessing.key_selector(data_dict, i).tail())
-        DataPreprocessing.dataInfo2(DataPreprocessing.key_selector(data_dict,i))
+        if dataInfo:
+            DataPreprocessing.plotSetting()
+            DataPreprocessing.dataInfo2(DataPreprocessing.key_selector(data_dict,i))
     return data_dict
 
-def data_watch_range(start_,end_):
-    
-    DataPreprocessing.plotSetting(pltStyle='default')
+def data_watch_range(start_,end_, dataInfo = False,data_folder_path="./데이터파일"):
     ## Data Fetching
-    data_folder_path="./데이터파일"
+    data_folder_path=data_folder_path
     start_data  =start_
     end_data =end_
     Analysis_title(f"{start_data}-{end_data} 번 파일 데이터 보고 분석 by Forrest.D.Park")
@@ -200,8 +213,127 @@ def data_watch_range(start_,end_):
         print(yellow(f"\n\n{data_num} 파일의 데이터 프레임.tail() "))
         # 화면 가운데 정렬하여 출력
         df_display_centered(DataPreprocessing.key_selector(data_dict, i).tail())
-        # DataPreprocessing.dataInfo2(DataPreprocessing.key_selector(data_dict,i))
+        if dataInfo:
+            DataPreprocessing.plotSetting(pltStyle='default')
+            DataPreprocessing.dataInfo2(DataPreprocessing.key_selector(data_dict,i))
     return data_dict
+
+def drawing_graph_01():
+    # 여가부 그래프 따라 그리기 
+    import pandas as pd
+    import matplotlib.pyplot as plt
+
+    columns = ['년도', '시간제', '종일제', '기타', '이용가구계', '가구별월평균이용시간']
+
+    # 데이터 추가
+    
+    data = [
+        {'년도': 2019, '시간제': 66783, '종일제': 3702, '기타': 0, '이용가구계': 70485, '가구별월평균이용시간': 71.8},
+        {'년도': 2020, '시간제': 56525, '종일제': 3138, '기타': 0, '이용가구계': 59663, '가구별월평균이용시간': 87.4},
+        {'년도': 2021, '시간제': 57454, '종일제': 2617, '기타': 11718, '이용가구계': 71789, '가구별월평균이용시간': 87.9},
+        {'년도': 2022, '시간제': 61138, '종일제': 2760, '기타': 14314, '이용가구계': 78212, '가구별월평균이용시간': 83.1},
+        {'년도': 2023, '시간제': 66515, '종일제': 1890, '기타': 17695, '이용가구계': 86100, '가구별월평균이용시간': 85.6},
+    ]
+
+    df_test = pd.DataFrame(data, columns=columns)
+
+    # 시각화
+    fig, ax1 = plt.subplots(figsize=(10, 6))
+
+    # bar plot for 시간제, 종일제 (옆으로 나란히)
+    width = 0.2  # 막대 너비 조절
+    bars_시간제 =ax1.bar(df_test['년도'] - width/2, df_test['시간제'], width, label='시간제', color='skyblue')
+
+    # 바 플롯 위에 데이터 값 표시 (텍스트로 붙이기)
+    for i, bar in enumerate(bars_시간제):
+        height = bar.get_height()
+        x_pos = bar.get_x()
+        bar_width = bar.get_width()
+        ax1.text(x_pos + bar_width / 2, height, f'{height:.0f}', ha='center', va='bottom', fontsize=8,color='blue')
+        
+        
+        
+    bars_종일제 =ax1.bar(df_test['년도'] + width/2, df_test['종일제'], width, label='종일제', color='lightcoral')
+    # 바 플롯 위에 데이터 값 표시 (텍스트로 붙이기)
+    for i, bar in enumerate(bars_종일제):
+        height = bar.get_height()
+        x_pos = bar.get_x()
+        bar_width = bar.get_width()
+        ax1.text(x_pos + bar_width / 2, height, f'{height:.0f}', ha='center', va='bottom', fontsize=8)
+
+    bars_기타 =ax1.bar(df_test['년도'] + width/2*3, df_test['기타'], width, label='기타', color='lightgreen')
+
+    # 바 플롯 위에 데이터 값 표시 (텍스트로 붙이기)
+    for i, bar in enumerate(bars_기타):
+        height = bar.get_height()
+        x_pos = bar.get_x()
+        bar_width = bar.get_width()
+        ax1.text(x_pos + bar_width / 2, height, f'{height:.0f}', ha='center', va='bottom', fontsize=8)
+
+        
+    ax1.plot(df_test['년도'], df_test['이용가구계']*1.05, label='이용가구계', marker='o', linestyle='-')
+    # 선 그래프 점에 데이터 값 표시 (텍스트로 붙이기)
+
+
+    for i, txt in enumerate(df_test['이용가구계']):
+        ax1.text(df_test['년도'][i], txt + 5500, f'{txt:.0f}', ha='center', va='bottom', fontsize=8,color='black')
+    ax1.set_xlabel('년도')
+    ax1.set_ylabel('이용 가구 수')
+    ax1.set_title('시간제, 종일제 이용 가구 수 변화 (2019-2023)')
+    ax1.legend(loc='upper left')
+    ax1.set_ylim([0,110000])
+    # twin axes for line plot
+    ax2 = ax1.twinx()
+    ax2.plot(df_test['년도'], df_test['가구별월평균이용시간'], label='가구별 월평균 이용 시간', marker='o', linestyle='-', color='darkgreen')
+    for i, txt in enumerate(df_test['가구별월평균이용시간']):
+        ax2.text(df_test['년도'][i], txt + 1.5, f'{txt:.0f}', ha='center', va='bottom', fontsize=9, color='darkgreen')
+    ax2.set_ylabel('가구별 월평균 이용 시간 (분)')  # y축 라벨 추가
+    ax2.spines['right'].set_position(('outward', 0))  # 오른쪽 축 위치 조정
+    ax2.tick_params(axis='y', labelcolor='darkgreen')  # y축 라벨 색상 변경
+    ax2.legend(loc='upper right')
+    ax2.set_ylim([60,150])
+    plt.grid(True)
+    plt.show()
+
+def 시계열그래프_칼럼안에서특정데이터에해당하는_다른열들(df,group_col="",selected_row="",target_col = [''],기준연월_str = "기준연월"):
+    import matplotlib.pyplot as plt, pandas as pd
+    import platform
+    from matplotlib import font_manager, rc
+    # unicode 설정
+    기준연월_str = "기준연월"
+    target = df[df[group_col]==selected_row]
+    print(yellow(f"Taget data : {selected_row}"))
+    
+    numeric_columns=target.select_dtypes(include=['number']).columns.tolist()
+    print(yellow(f"numeric colums of taget data : {numeric_columns}"))
+    
+    target[기준연월_str] = pd.to_datetime(target[기준연월_str], format='%Y%m')
+
+    df_display_centered(target.head(1))
+    def visualize_01(target,numeric_columns,target_col):
+        ### 특정 칼럼 시각화 ####
+        plt.figure(figsize=(15,8))
+        for column in numeric_columns:
+            if column== 기준연월_str:
+                continue
+            # print(column)
+            if column in target_col:
+                plt.plot(target[기준연월_str],target[column],label=column, marker = 'o')
+        # plt.plot(target['기준연월'],target[target_col],label=target_col, marker = 'o') 
+        plt.title(f'{selected_row} - 시간에 따른 {target_col} 변화')
+        plt.xlabel('기준연월')
+        plt.ylabel(target_col)
+        plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+        plt.xticks(rotation=45)
+        plt.grid(True, linestyle='--', alpha=0.7)
+
+        # x축 날짜 포맷 설정
+        plt.gca().xaxis.set_major_formatter(plt.matplotlib.dates.DateFormatter('%Y-%m'))
+        plt.gca().xaxis.set_major_locator(plt.matplotlib.dates.MonthLocator(interval=3))
+        plt.tight_layout()
+        plt.show()
+    visualize_01(target,numeric_columns,target_col)
+    visualize_01(target,numeric_columns,['신규회원수','신규아동수','대기정회원수','웹회원수'])
 
 
 class DataPreprocessing:
