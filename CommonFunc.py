@@ -180,6 +180,9 @@ def Analysis_title(Title):
 
 def df_display_centered(df):
     from IPython.display import display, HTML
+    import pandas as pd 
+    if type(df) != type(pd.DataFrame()):
+        df=pd.DataFrame(df)
     display(HTML('<div style="text-align: center; margin-left: 50px;">{}</div>'.format(df.to_html().replace('<table>', '<table style="margin: 0 auto;">'))))
 
 def data_watch_one(start_, dataInfo=False,data_folder_path="./데이터파일"):
@@ -336,6 +339,49 @@ def 시계열그래프_칼럼안에서특정데이터에해당하는_다른열�
     visualize_01(target,numeric_columns,['신규회원수','신규아동수','대기정회원수','웹회원수'])
 
 
+def data_column_info(data_column_info_str = ""):
+    if data_column_info_str:
+        data_column_info = data_column_info_str
+    else : 
+        data_column_info=\
+    '''
+    - Molecule ChEMBL ID: ChEMBL 데이터베이스에서 분자의 고유 식별자     
+    - Standard Type: 측정된 활성의 유형 (여기서는 IC50)        
+    - Standard Relation: 활성 값의 관계 (여기서는 '=', 정확한 값을 의미)       
+    - Standard Value: 표준화된 활성 값         
+    - Standard Units: 활성 값의 단위 (여기서는 nM, 나노몰)       
+    - pChEMBL Value: -log10(몰 단위의 활성 값). 활성의 크기를 나타내는 표준화된 값           
+    - Assay ChEMBL ID: 활성을 측정한 실험의 고유 식별자         
+    - Target ChEMBL ID: 목표 단백질의 고유 식별자        
+    - Target Name: 목표 단백질의 이름           
+    - Target Organism: 목표 단백질이 속한 생물종            
+    - Target Type: 목표의 유형 (여기서는 단일 단백질)          
+    - Document ChEMBL ID: 이 데이터의 출처 문서의 고유 식별자        
+    - IC50_nM: IC50 값 (나노몰 단위)       
+    - pIC50: -log10(IC50). IC50의 음의 로그 값으로, 활성의 크기를 나타냄          
+    - Smiles: 화합물의 구조를 나타내는 SMILES 문자열 '''        
+    lines = data_column_info.strip().split('\n')
+    for line in lines:
+        parts = line.split(':', 1)  # 콜론 기준으로 분리
+        if len(parts) == 2:
+            left_part = parts[0].strip()
+            right_part = parts[1].strip()
+            print(rainbow_orange(f"{left_part}:",True), rainbow_cyan(f"{right_part}"))
+        else:
+            print(line) 
+
+
+def drop_single_data_col(df):
+    to_drop_columns = []
+
+    for order,i in enumerate(df.columns):
+        if len(df[i].unique())==1:
+            print(yellow(f"   -{order}.{i}칼럼의 데이터는 하나뿐입니다."),rainbow_cyan(" 값:"),rainbow_orange(f"{df[i].unique()[0]}"))
+            to_drop_columns.append(i)
+    df = df.drop(columns = to_drop_columns)
+    print(blue("--- 데이터가 하나뿐인 칼럼을 삭제한 데이터프레임"))
+    return df
+
 class DataPreprocessing:
     def __init__(self) -> None:
         pass
@@ -352,17 +398,20 @@ class DataPreprocessing:
         from tqdm import tqdm  # 진행 상황 표시 라이브러리
         data_dict ={}
         count = 1
-        with tqdm(total=100, desc=green("Data File 불러오는 중..",True), bar_format="{desc}:{percentage:3.0f}%|{bar}| {n_fmt}/{total_fmt} [elapsed: {elapsed} remaining: {remaining}]", colour='green') as pbar:
-            for i in (os.listdir(data_folder_path)):
-                if int(i.split(".")[0]) in range(start,end):
-                    # print(int(i.split(".")[0])s)
-                    data_dict[f"{i}"]= pd.read_excel(os.path.join(data_folder_path, i))
-                    pbar.update(count) 
-                    count +=3
-
-            #else : 
-                #for i in sorted(data_dict.keys()):print(yellow(f"  {i}"))
-                
+        with tqdm(total=100, desc="Data File 불러오는 중..", bar_format="{desc}:{percentage:3.0f}%|{bar}| {n_fmt}/{total_fmt} [elapsed: {elapsed} remaining: {remaining}]", colour='green') as pbar:
+            for filename in os.listdir(data_folder_path):
+                file_number = int(filename.split(".")[0])
+                if file_number in range(start, end):
+                    file_path = os.path.join(data_folder_path, filename)
+                    if filename.endswith(".csv"):
+                        data_dict[filename] = pd.read_csv(file_path)
+                    elif filename.endswith((".xls", ".xlsx")):
+                        data_dict[filename] = pd.read_excel(file_path)
+                    else:
+                        print(f"Unsupported file type: {filename}")
+                    
+                    pbar.update(count)
+                    count += 3
 
         return data_dict
     
@@ -855,7 +904,10 @@ class ModelTest():
         predictions = multi_output_regressor_lin.predict(test_input)
         ModelTest.real_pred_compare(predictions,test_target,test_input)
 
-    def knn_regressor_predict(train_input, train_target, test_input, test_target):
+    def knn_regressor_predict(train_input, train_target, test_input, test_target, multi_out=True):
+        ### Description: multiioutput 일때와 single output 일 때 구분해서 학습하도록 함. 
+        ### Date : 2024.08.29 
+        
         import numpy as np
         from sklearn.multioutput import MultiOutputRegressor
         from sklearn.neighbors import KNeighborsRegressor
@@ -867,32 +919,71 @@ class ModelTest():
 
         ## KNN regression model
         knn_regressor = KNeighborsRegressor(n_neighbors=3)
-        ## Multi Output Setting
-        multi_output_regressor_knn = MultiOutputRegressor(knn_regressor)
-        multi_output_regressor_knn.fit(train_input, train_target)
 
-        score = multi_output_regressor_knn.score(test_input, test_target)
-        y_pred_knn = multi_output_regressor_knn.predict(test_input)
-        mse = mean_squared_error(test_target, y_pred_knn)
-        rmse = np.sqrt(mse)
-        # R2 스코어 계산
-        r2 = r2_score(test_target, y_pred_knn)
-        print(yellow(f'KNN(3) regression model score: {score}'))
-        print(f'KNN(3) regression model RMSE: {rmse:.2f}')
-        print(f'KNN regression model R2 score: {r2:.2f}')
-        #### 교차검증 
-        scores_cv = cross_val_score(multi_output_regressor_knn,train_input,train_target,scoring='neg_mean_squared_error',cv=10)
-        rmse_cv = np.sqrt(-scores_cv)
-        print("\t ",f"KNN cv score : {rmse_cv}")
-        print("\t ",f"KNN cv RMSE average : {rmse_cv.mean():.2f}")
-        # 모델 저장
-        joblib.dump(multi_output_regressor_knn, "KNN_model")
-        print(f'모델이 {"KNN_model"} 이름으로 저장됨')
-        predictions = multi_output_regressor_knn.predict(test_input)
+        if multi_out:
+            ## Multi Output Setting
+            multi_output_regressor_knn = MultiOutputRegressor(knn_regressor)
+            multi_output_regressor_knn.fit(train_input, train_target)
+            score = multi_output_regressor_knn.score(test_input, test_target)
+            y_pred_knn = multi_output_regressor_knn.predict(test_input)
+            mse = mean_squared_error(test_target, y_pred_knn)
+            rmse = np.sqrt(mse)
+            # R2 스코어 계산
+            r2 = r2_score(test_target, y_pred_knn)
+            print(yellow(f'KNN(k=3) regression model score: {score}'))
+            print(yellow(f'KNN(k=3) regression model RMSE: {rmse:.2f}'))
+            print(yellow(f'KNN regression R2 score: {r2:.2f}'))
+            #### 교차검증 
+            scores_cv = cross_val_score(multi_output_regressor_knn, train_input, train_target, scoring='neg_mean_squared_error', cv=10)
+            rmse_cv = np.sqrt(-scores_cv)
+            print(rainbow_orange(f" ◉ KNN Cross Validation score : {rmse_cv}"))
+            print(rainbow_orange(f" ◉ KNN Cross Validation RMSE average : {rmse_cv.mean():.2f}"))
+            # 모델 저장
+            joblib.dump(multi_output_regressor_knn, "KNN_model")
+            print(f'모델이 {"KNN_model"} 이름으로 저장됨')
+            predictions = multi_output_regressor_knn.predict(test_input)
 
-        ModelTest.real_pred_compare(predictions,test_target,test_input)
+        else:  # multi_out이 False일 경우
+            knn_regressor.fit(train_input, train_target)  # KNeighborsRegressor를 학습
+            score = knn_regressor.score(test_input, test_target)
+            y_pred_knn = knn_regressor.predict(test_input)
+            mse = mean_squared_error(test_target, y_pred_knn)
+            rmse = np.sqrt(mse)
+            # R2 스코어 계산
+            r2 = r2_score(test_target, y_pred_knn)
+            print(yellow(f' ◉ KNN(k=3) regression model score: {score:.2f}'))
+            print(yellow(f' ◉ KNN(k=3) regression model RMSE: {rmse:.2f}'))
+            print(yellow(f' ◉ KNN regression R2 score: {r2:.2f}'))
+            #### 교차검증 
+            scores_cv = cross_val_score(knn_regressor, train_input, train_target, scoring='neg_mean_squared_error', cv=10)
+            rmse_cv = np.sqrt(-scores_cv)
+            print(rainbow_orange(f" ◉ KNN Cross Validation RMSE : "))
+            for order,i in enumerate(rmse_cv):
+                if order ==0:
+                    print("    : ",end="")
+                print(f" {i:.3f} ",end=", ")
+            else: print()
+            print(rainbow_orange(f" ◉ KNN Cross Validation RMSE average : {rmse_cv.mean():.2f}"))
+            # 모델 저장
+            joblib.dump(knn_regressor, "KNN_model")
+            print(f'모델이 {"KNN_model"} 이름으로 저장됨')
+            predictions = knn_regressor.predict(test_input)
 
-    def xgboost_regressor_predict(train_input, train_target, test_input, test_target):
+    def xgboost_regressor_predict(train_input, train_target, test_input, test_target, multi_out=True):
+        """
+        XGBoost 회귀 모델을 학습하고 예측합니다. 
+
+        Args:
+            train_input (pd.DataFrame): 학습 데이터의 입력 특성
+            train_target (pd.Series): 학습 데이터의 목표 값
+            test_input (pd.DataFrame): 테스트 데이터의 입력 특성
+            test_target (pd.Series): 테스트 데이터의 목표 값
+            multi_out (bool, optional): 여러 출력 값을 예측할지 여부. 기본값은 True입니다.
+
+        Returns:
+            None: 결과를 출력하고 모델을 저장합니다.
+        """
+
         import numpy as np
         from sklearn.multioutput import MultiOutputRegressor
         from sklearn.metrics import mean_squared_error
@@ -901,29 +992,75 @@ class ModelTest():
         from sklearn.model_selection import cross_val_score
         import joblib
 
-        xg_reg = XGBRegressor()
-        multi_output_regressor_xg = MultiOutputRegressor(xg_reg)
-        multi_output_regressor_xg.fit(train_input, train_target)
+        # xg_reg = XGBRegressor(enable_categorical=True)
+        xg_reg = XGBRegressor(enable_categorical=True, feature_names=train_input.columns[:-1]) # feature_names 설정
+        # 데이터 타입 변환 (필요에 따라)
+        for col in train_input.columns:
+            if col == 'Smiles':  # SMILES 컬럼은 제외
+                continue
+            train_input[col] = train_input[col].astype(int)  # 모든 열을 int 타입으로 변환 (필요에 따라 다른 타입으로 변환)
+            test_input[col] = test_input[col].astype(int)  # test_input도 마찬가지로 변환
 
-        score = multi_output_regressor_xg.score(test_input, test_target)
-        y_pred_xg = multi_output_regressor_xg.predict(test_input)
-        mse = mean_squared_error(test_target, y_pred_xg)
-        rmse = np.sqrt(mse)
-        # R2 스코어 계산
-        r2 = r2_score(test_target, y_pred_xg)
-        print(yellow(f'XGB regression model score: {score}'))
-        print(f'XGBoost(3) regression model RMSE: {rmse:.2f}')
-        print(f'XGBoost regression model R2 score: {r2:.2f}')
-        ### 교찯검증
-        scores_cv = cross_val_score(multi_output_regressor_xg,train_input,train_target,scoring='neg_mean_squared_error',cv=10)
-        rmse_cv = np.sqrt(-scores_cv)
-        # 모델 저장
-        joblib.dump(multi_output_regressor_xg, "XG_model")
-        print(f'모델이 {"XG_model"} 이름으로 저장됨')
-        print("\t ",f"XGB cv score : {rmse_cv}")
-        print("\t ",f"XGB cv RMSE average : {rmse_cv.mean():.2f}")
-        predictions = multi_output_regressor_xg.predict(test_input)
-        ModelTest.real_pred_compare(predictions,test_target,test_input)
+        if multi_out:
+            # 여러 출력 값 예측 설정
+            multi_output_regressor_xg = MultiOutputRegressor(xg_reg)
+            multi_output_regressor_xg.fit(train_input, train_target)
+
+            score = multi_output_regressor_xg.score(test_input, test_target)
+            y_pred_xg = multi_output_regressor_xg.predict(test_input)
+            mse = mean_squared_error(test_target, y_pred_xg)
+            rmse = np.sqrt(mse)
+            # R2 스코어 계산
+            r2 = r2_score(test_target, y_pred_xg)   
+            print(yellow(f' ◉ XGB regression model score: {score:.2f}'))
+            print(yellow(f' ◉ XGBoost(3) regression model RMSE: {rmse:.2f}'))
+            print(yellow(f' ◉ XGBoost regression model R2 score: {r2:.2f}'))
+            ### 교차검증
+            scores_cv = cross_val_score(multi_output_regressor_xg, train_input, train_target, scoring='neg_mean_squared_error', cv=10)
+            rmse_cv = np.sqrt(-scores_cv)
+            # 모델 저장
+            joblib.dump(multi_output_regressor_xg, "XG_model")
+            print(f'모델이 {"XG_model"} 이름으로 저장됨')
+            print(rainbow_orange(f" ◉ XGB Cross Validation RMSE : "))
+            for order, i in enumerate(rmse_cv):
+                if order == 0:
+                    print("    : ", end="")
+                print(f" {i:.3f} ", end=", ")
+            else:
+                print()
+            print(rainbow_orange(f" ◉ XGB Cross Validation RMSE average : {rmse_cv.mean():.2f}"))
+            predictions = multi_output_regressor_xg.predict(test_input)
+
+        else:
+            # 단일 출력 값 예측
+            xg_reg.fit(train_input, train_target)
+
+            score = xg_reg.score(test_input, test_target)
+            y_pred_xg = xg_reg.predict(test_input)
+            mse = mean_squared_error(test_target, y_pred_xg)
+            rmse = np.sqrt(mse)
+            # R2 스코어 계산
+            r2 = r2_score(test_target, y_pred_xg)
+            print(yellow(f' ◉ XGB regression model score: {score:.2f}'))
+            print(yellow(f' ◉ XGBoost(3) regression model RMSE: {rmse:.2f}'))
+            print(yellow(f' ◉ XGBoost regression model R2 score: {r2:.2f}'))
+            ### 교차검증
+            scores_cv = cross_val_score(xg_reg, train_input, train_target, scoring='neg_mean_squared_error', cv=10)
+            rmse_cv = np.sqrt(-scores_cv)
+            # 모델 저장
+            joblib.dump(xg_reg, "XG_model")
+            print(f'모델이 {"XG_model"} 이름으로 저장됨')
+            print(rainbow_orange(f" ◉ XGB Cross Validation RMSE : "))
+            for order, i in enumerate(rmse_cv):
+                if order == 0:
+                    print("    : ", end="")
+                print(f" {i:.3f} ", end=", ")
+            else:
+                print()
+            print(rainbow_orange(f" ◉ XGB Cross Validation RMSE average : {rmse_cv.mean():.2f}"))
+            predictions = xg_reg.predict(test_input)
+
+        # ModelTest.real_pred_compare(predictions, test_target, test_input)
 
     def randomforest_regressor_predict(train_input, train_target, test_input, test_target):
         import numpy as np
