@@ -182,13 +182,13 @@ def data_watch_one(start_, dataInfo=False,data_folder_path="./데이터파일"):
     start_data  =start_
     end_data =start_data+1
     
-    Analysis_title(f"{start_data}-{end_data} 번 파일 데이터 보고 분석 by Forrest.D.Park")
+    Analysis_title(f"{start_data}-{end_data} 번 파일 데이터 보고 분석 ")
     data_dict=DataPreprocessing.data_fetch(data_folder_path,start_data,end_data)
     
     ## data watching
     for i in range(len(data_dict.keys())):
         data_num= sorted(data_dict.keys())[i]
-        print(yellow(f"\n\n{data_num} 파일의 데이터 프레임.tail() "))
+        print(yellow(f"{data_num} 파일의 데이터 프레임.tail() "))
         # 화면 가운데 정렬하여 출력
         df_display_centered(DataPreprocessing.key_selector(data_dict, i).tail())
         if dataInfo:
@@ -201,11 +201,11 @@ def data_watch_range(start_,end_, dataInfo = False,data_folder_path="./데이터
     data_folder_path=data_folder_path
     start_data  =start_
     end_data =end_
-    Analysis_title(f"{start_data}-{end_data} 번 파일 데이터 보고 분석 by Forrest.D.Park")
+    Analysis_title(f"{start_data}-{end_data} 번 파일 데이터 보고 분석")
     data_dict=DataPreprocessing.data_fetch(data_folder_path,start_data,end_data)
     for i in range(len(data_dict.keys())):
         data_num= sorted(data_dict.keys())[i]
-        print(yellow(f"\n\n{data_num} 파일의 데이터 프레임.tail() "))
+        print(yellow(f"{data_num} 파일의 데이터 프레임.tail() "))
         # 화면 가운데 정렬하여 출력
         df_display_centered(DataPreprocessing.key_selector(data_dict, i).tail())
         if dataInfo:
@@ -379,24 +379,41 @@ class DataPreprocessing:
         pass
     
     def key_selector(data_dict,num=0):
+        """
+            - Description : data가 들어있는 dictionary 파일을 순서대로 선택해서 출력함 
+                그리고 딕셔너리에 있는 df key 를 출력하고 사용자가 몇번째 데이터를 호출했는지 알려줌. 
+            - 예시 : 
+        """
         for order,i in enumerate(sorted(data_dict.keys())):
             print(rainbow_magenta(f"\t{order} 번째 : {i}"))
         data_name= sorted(data_dict.keys())[num]
-        print(rainbow_yellow(f"{num}번째 데이터를 {data_name}호출합니다. "))
+        print(rainbow_yellow(f"\t{num}번째 데이터 {data_name} 호출합니다. "))
         return data_dict[data_name]
     
     def data_fetch(data_folder_path,start,end):
+       
         import os,pandas as pd
         from tqdm import tqdm  # 진행 상황 표시 라이브러리
         data_dict ={}
         count = 1
+        
+        def encoding_detector(file_path):
+            import chardet ## encoding 정보 확인 라이브러리 
+            with open(file_path, 'rb') as f:
+                raw_data = f.read()
+                encoding = chardet.detect(raw_data)['encoding']
+                print(blue(f"  - Detected encoding: {encoding}"))
+                return encoding
+        
+        
         with tqdm(total=100, desc="Data File 불러오는 중..", bar_format="{desc}:{percentage:3.0f}%|{bar}| {n_fmt}/{total_fmt} [elapsed: {elapsed} remaining: {remaining}]", colour='green') as pbar:
             for filename in os.listdir(data_folder_path):
                 file_number = int(filename.split(".")[0])
                 if file_number in range(start, end):
                     file_path = os.path.join(data_folder_path, filename)
+                    encoding = encoding_detector(file_path)
                     if filename.endswith(".csv"):
-                        data_dict[filename] = pd.read_csv(file_path)
+                        data_dict[filename] = pd.read_csv(file_path, encoding=encoding)
                     elif filename.endswith((".xls", ".xlsx")):
                         data_dict[filename] = pd.read_excel(file_path)
                     else:
@@ -407,30 +424,36 @@ class DataPreprocessing:
 
         return data_dict
     
-    def plotSetting(pltStyle="seaborn-v0_8"):
+    def plotSetting(pltStyle="seaborn-v0_8", setting_info =False ):
         '''
         # Fucntion Description : Plot 한글화 Setting
         # Date : 2024.06.05
         # Author : Forrest D Park 
         # update : 
+         ◦ 2024.09.02 AM 11:02 by pdg : ploSetting() 함수 수정 
+            - print 가 이쁘게 안나오는 문제 해결 ☑︎
         '''
 
-        
-        import warnings ;warnings.filterwarnings('ignore')
-        import sys ;sys.path.append("../../../")
-        import os 
-        print(blue(f"◎ 현재 경로의 폴더 목록 --",True))
-        for i,file in enumerate(os.listdir(os.getcwd())):
-            if os.path.isdir(os.path.join(os.getcwd(),file)):
-                print(yellow(f"  {i}. {str(os.path.join(os.getcwd(),file))}"))
-        sys.path.append("../")
-        sys.path.append("../../")
-        
-        print(blue(f"◎ 주피터 가상환경 체크 : {os.environ['CONDA_DEFAULT_ENV']}",True))
-        print(blue(f"◎ Python 설치 경로:{sys.executable}",True))
-        print(blue(f"◎ Graph 한글화 Setting",True))
-        
-  
+        if setting_info:
+            import warnings ;warnings.filterwarnings('ignore')
+            import sys ;sys.path.append("../../../")
+            import os 
+            print(blue(f"  ⁍ 현재 경로의 폴더 목록 --",True))
+            count =1
+            for order,file in enumerate(os.listdir(os.getcwd())):
+                if os.path.isdir(os.path.join(os.getcwd(),file)):
+                    print(yellow(f"  폴더{count} :  {str(os.path.join(os.getcwd(),file))}"))
+                    count +=1
+            
+            print(blue("../ +  ../../ 경로 python path 에 추가. "))
+            sys.path.append("../")
+            sys.path.append("../../")
+            
+            
+            print(blue(f"◎ 주피터 가상환경  : {os.environ['CONDA_DEFAULT_ENV']}",True))
+            print(blue(f"◎ Python 설치 경로:{sys.executable}",True))
+            print(blue(f"◎ Graph 한글화 Setting",True))
+            
         # graph style seaborn
         import matplotlib.pyplot as plt # visiulization
         import platform
@@ -444,11 +467,9 @@ class DataPreprocessing:
             rc('font', family=font_name)
         else:
             print("Unknown System")
-        print(colored_text("◎ OS platform 한글 세팅완료",'blue',bold=True))
+        print(colored_text("  - ◎ matplot graph set complete",'blue',bold=True))
         # print(rainbow_green(f"✻✻✻✻______{imo*1} {Title} {imo*1}______✻✻✻✻",True))
 
-    
-    
     def dataInfo2(df, replace_Nan=False, PrintOutColnumber = 0,nanFillValue=0, graphPlot=True):
         ### Description  : 새운 데이터 정보 까기 함수
         import pandas as pd
@@ -550,10 +571,6 @@ class DataPreprocessing:
                 print("\t",red(f"총 {len(under_limit_columns)}개"))
                 print(rainbow_cyan(" ---- data frame 의 정보 조사 완료 -----}",True))
                 return under_limit_columns
-                
-
-    
-    
     
     def column_hist(df,col):
         import pandas as pd
