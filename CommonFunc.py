@@ -1,28 +1,20 @@
 ''' 
 📌 Description :  
-
-    - 경진대회 데이터 셋 보기위한 함수들 ...
-    - Visualization Class :
-        0)
     - DataPreprocessing class :
-        0) plotSetting
-        1) DataInfo
-        2) column_hist
-        3) column_zero_find
-        4) show_corr
-    - ModelTest class 
-        1) real_pred_compare
-        2) linear_regressor_prdict
-        3) knn_regressor_predict
-        4) xgboost_regressor_predict
-        5) randomforest_regressor_predict
+    - ModelTest class : 
+
 📌 Date : 2024.06.02 
 📌 Author : Forrest D Park 
 📌 Update : 
-    2024.08.07 by pdg : DataInfo 함수 생성
-    2024.08.23  by pdg : DataInfo -> 시계열 데이터 일때 그래프 시각화 하는 기능 추가 
+    ○ 2024.08.07 by pdg : DataInfo 함수 생성
+    ○ 2024.08.23  by pdg : DataInfo -> 시계열 데이터 일때 그래프 시각화 하는 기능 추가 
         - 분석때 배운거 다 플랏할수있도록 함수화 하자. 
-
+    ○ 2024.09.02 Mon AM 10:05 py pdg
+        - Function module 은 굉장히 업데이트가 많이 일어나기 때문에 업데이트 로그를 따로 파일로 관리하는게 낫다. 
+        - 이렇게 주석으로 하는 것보다 내가 적은 시간에 알맞게 시간대랑 날짜랑 업데이트 내용이 표현되어서 txt 파일에 저장되고
+            그렇게 저장된 텍스트 파일은 로그로 남고 Cummon 의 main 을 실행하면 업데이트 로그파일이 프린트되도록 하자. 
+        - 최근에 함수만들면 아무 설명도 없이 그냥 띡 가져다 붙였는데 설명을 좀 써놓자. 
+        - data_column_info 가아니라 명칭을 바꾸어두자. 
 '''
 
 def imd(image_address,width =700, height=300):
