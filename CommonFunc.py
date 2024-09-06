@@ -15,6 +15,9 @@
             그렇게 저장된 텍스트 파일은 로그로 남고 Cummon 의 main 을 실행하면 업데이트 로그파일이 프린트되도록 하자. 
         - 최근에 함수만들면 아무 설명도 없이 그냥 띡 가져다 붙였는데 설명을 좀 써놓자. 
         - data_column_info 가아니라 명칭을 바꾸어두자. 
+    
+    2024.09.06
+        - data watch range -> +1 추가
 '''
 
 def imd(image_address,width =700, height=300):
@@ -177,7 +180,7 @@ def df_display_centered(df):
         df=pd.DataFrame(df)
     display(HTML('<div style="text-align: center; margin-left: 50px;">{}</div>'.format(df.to_html().replace('<table>', '<table style="margin: 0 auto;">'))))
 
-def data_watch_one(start_, dataInfo=False,data_folder_path="./데이터파일"):
+def data_watch_one(start_, dataInfo=False,data_folder_path="./Data"):
     ## Data Fetching range
     start_data  =start_
     end_data =start_data+1
@@ -196,11 +199,11 @@ def data_watch_one(start_, dataInfo=False,data_folder_path="./데이터파일"):
             DataPreprocessing.dataInfo2(DataPreprocessing.key_selector(data_dict,i))
     return data_dict
 
-def data_watch_range(start_,end_, dataInfo = False,data_folder_path="./데이터파일"):
+def data_watch_range(start_,end_, dataInfo = False,data_folder_path="./Data"):
     ## Data Fetching
     data_folder_path=data_folder_path
     start_data  =start_
-    end_data =end_
+    end_data =end_+1
     Analysis_title(f"{start_data}-{end_data} 번 파일 데이터 보고 분석")
     data_dict=DataPreprocessing.data_fetch(data_folder_path,start_data,end_data)
     for i in range(len(data_dict.keys())):
