@@ -660,9 +660,15 @@ struct PredictView03: View {
             ZStack {
                 subwayImage()
             }
-            .navigationTitle("승하차 인원 예측")
+            .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
+                    ToolbarItem(placement: .principal) {
+                        Text("지하철 언잼(UnJam) 예측")
+//                        Text("승하차 인원 예측")
+                            .font(.custom("Tenada", size: 30))
+                            .padding()
+                            
+                        
                         NavigationLink(destination: SettingView(stationName: "중화", line: 7, time: 10)) {
                             Image(systemName: "gearshape.fill")
                                 .imageScale(.large)

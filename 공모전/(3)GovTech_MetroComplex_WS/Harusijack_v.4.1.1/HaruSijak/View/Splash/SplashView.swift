@@ -28,17 +28,11 @@ struct SplashView: View {
                     .frame(width: 400, height: 400)
                 Spacer()
                 
-//                RoundedRectangle(cornerRadius: 10)
-//                            .stroke(Color.white, lineWidth: 4)
-//                            .background(Color.white)
-//                            .frame(width: 200, height: 100)
-//                            .offset(x: 0, y: 100)
-                        
-                        Text("하루시작")
-                            .font(.system(size: 40, weight: .bold, design: .rounded))
-                            .foregroundColor(.black)
-                            .offset(y: 120)
-                
+                Text("지하철 UnJam이 언젬?")
+                    .font(.custom("Tenada", size: 30))
+                    .foregroundColor(.black)
+                    .offset(y: 120)
+        
             }
             
             Spacer()
@@ -46,7 +40,7 @@ struct SplashView: View {
             
         }
         .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                 withAnimation {
                     self.isActive = true
                 }
