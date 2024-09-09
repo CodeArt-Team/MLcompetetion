@@ -442,6 +442,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				GENERATE_PKGINFO_FILE = NO;
 				INFOPLIST_FILE = HaruSijak/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "지하철 언잼";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;
@@ -485,6 +486,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				GENERATE_PKGINFO_FILE = NO;
 				INFOPLIST_FILE = HaruSijak/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "지하철 언잼";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;
