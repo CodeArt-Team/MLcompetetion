@@ -17,6 +17,8 @@
 		5464966A2C1A98D900B1FF48 /* Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 546496692C1A98D900B1FF48 /* Notification.swift */; };
 		5471ADBB2C0EDACD00D24E62 /* Zoomable in Frameworks */ = {isa = PBXBuildFile; productRef = 5471ADBA2C0EDACD00D24E62 /* Zoomable */; };
 		548934FF2C338CC300EEE89A /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 548934FE2C338CC300EEE89A /* ChatView.swift */; };
+		549039A42C8EB7CD0011570C /* Hakgyoansim Chilpanjiugae TTF B.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 549039A32C8EB7CD0011570C /* Hakgyoansim Chilpanjiugae TTF B.ttf */; };
+		549039A62C8EB9240011570C /* Tenada.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 549039A52C8EB9240011570C /* Tenada.ttf */; };
 		549045702C20387C00A9F342 /* train1.json in Resources */ = {isa = PBXBuildFile; fileRef = 5490456F2C20387C00A9F342 /* train1.json */; };
 		54F80F062C0AF4EE00D83A08 /* HaruSijakApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54F80F052C0AF4EE00D83A08 /* HaruSijakApp.swift */; };
 		54F80F0A2C0AF4EF00D83A08 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 54F80F092C0AF4EF00D83A08 /* Assets.xcassets */; };
@@ -44,6 +46,8 @@
 		546496692C1A98D900B1FF48 /* Notification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notification.swift; sourceTree = "<group>"; };
 		5464966B2C1AC32600B1FF48 /* HaruSijak.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HaruSijak.entitlements; sourceTree = "<group>"; };
 		548934FE2C338CC300EEE89A /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
+		549039A32C8EB7CD0011570C /* Hakgyoansim Chilpanjiugae TTF B.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Hakgyoansim Chilpanjiugae TTF B.ttf"; sourceTree = "<group>"; };
+		549039A52C8EB9240011570C /* Tenada.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Tenada.ttf; sourceTree = "<group>"; };
 		5490456F2C20387C00A9F342 /* train1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = train1.json; sourceTree = "<group>"; };
 		54F80F022C0AF4EE00D83A08 /* HaruSijak.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HaruSijak.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		54F80F052C0AF4EE00D83A08 /* HaruSijakApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HaruSijakApp.swift; sourceTree = "<group>"; };
@@ -85,6 +89,8 @@
 		5464965F2C1A87A000B1FF48 /* Font */ = {
 			isa = PBXGroup;
 			children = (
+				549039A52C8EB9240011570C /* Tenada.ttf */,
+				549039A32C8EB7CD0011570C /* Hakgyoansim Chilpanjiugae TTF B.ttf */,
 				546496672C1A8C6100B1FF48 /* 온글잎 누카.ttf */,
 				546496652C1A8BD600B1FF48 /* KCC-Hanbit.ttf */,
 			);
@@ -269,9 +275,11 @@
 				546496682C1A8C6100B1FF48 /* 온글잎 누카.ttf in Resources */,
 				549045702C20387C00A9F342 /* train1.json in Resources */,
 				546496662C1A8BD600B1FF48 /* KCC-Hanbit.ttf in Resources */,
+				549039A42C8EB7CD0011570C /* Hakgyoansim Chilpanjiugae TTF B.ttf in Resources */,
 				A773B6172C1FD49C0071D7FF /* train2.json in Resources */,
 				54F80F0D2C0AF4EF00D83A08 /* Preview Assets.xcassets in Resources */,
 				A773B6162C1FD49C0071D7FF /* train3.json in Resources */,
+				549039A62C8EB9240011570C /* Tenada.ttf in Resources */,
 				54F80F0A2C0AF4EF00D83A08 /* Assets.xcassets in Resources */,
 				A773B6192C2001670071D7FF /* SplashLotti.json in Resources */,
 			);
