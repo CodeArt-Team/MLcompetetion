@@ -29,6 +29,9 @@
          - 2024.07.01 by J.Park :
             * 1. Zoom,Drag시 기준 좌표 변경되는 오류 수정
               2. sheet 호출시 async 삭제
+        - 2024.09.09 by snr:
+            * 1. toolbar 색 설정
+              2. 설정 아이콘 클릭 시, db에 저장된 역, 시간 정보를 가지고 가게 함
  
  */
 
@@ -644,38 +647,54 @@ import SwiftUI
 
 struct PredictView03: View {
     
+    @State var stationName: String
+    @State var line: String
+    @State var time: String
+    
     init() {
            // 네비게이션 바 스타일을 모던하고 심플하게 설정
            let appearance = UINavigationBarAppearance()
-           appearance.backgroundColor = UIColor.systemBackground // 배경을 기본 시스템 배경색으로 설정
+//           appearance.backgroundColor = UIColor.systemBackground // 배경을 기본 시스템 배경색으로 설정
+           appearance.backgroundColor = UIColor(Color("toolbarColor")) // 배경을 기본 시스템 배경색으로 설정
            appearance.titleTextAttributes = [.foregroundColor: UIColor.label] // 기본 텍스트 색상으로 설정
            appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.label]
 
            UINavigationBar.appearance().standardAppearance = appearance
            UINavigationBar.appearance().scrollEdgeAppearance = appearance
+        
+        if let first = TimeSettingDB().queryDB().first{
+            _stationName = State(initialValue: first.station)
+            _line = State(initialValue: String(first.line))
+            _time = State(initialValue: String(first.time))
+        } else {
+            _stationName = State(initialValue: "")
+            _line = State(initialValue: "")
+            _time = State(initialValue: "")
+        }
        }
 
     var body: some View {
         NavigationView {
             ZStack {
                 subwayImage()
+                    .edgesIgnoringSafeArea(.all)
             }
             .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .principal) {
-                        Text("지하철 언잼(UnJam) 예측")
-//                        Text("승하차 인원 예측")
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                        Text("지하철 혼잡도 예측")
                             .font(.custom("Tenada", size: 30))
                             .padding()
-                            
-                        
-                        NavigationLink(destination: SettingView(stationName: "중화", line: 7, time: 10)) {
-                            Image(systemName: "gearshape.fill")
-                                .imageScale(.large)
-                                .foregroundColor(.primary) // 아이콘 색상을 기본 텍스트 색상으로 설정
-                        }
+                    }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    // 시간 또는 역 설정을 안했을 때는 SettingView에 124값을 가지고 가도록 함.
+                    NavigationLink(destination: SettingView(stationName: stationName, line: Int(line) ?? 124, time: Int(time) ?? 124)) {
+                        Image(systemName: "gearshape.fill")
+                            .imageScale(.large)
+                            .foregroundColor(.primary) // 아이콘 색상을 기본 텍스트 색상으로 설정
                     }
                 }
+            }
         } // NavigationView
     }
 }

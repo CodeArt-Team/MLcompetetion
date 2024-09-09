@@ -4,6 +4,17 @@
 //
 //  Created by 신나라 on 6/13/24.
 // 2024.07.05 snr : 호선과 역명 설정되도록 수정
+/*
+    Description : HaruSijack App 개발 setting page
+    Date : 2024.6.13
+    Author : snr
+    Detail :
+    Updates :
+        * 2024.07.05 by snr : 호선과 역명 설정되도록 수정
+        * 2024.09.09 by snr : 
+            1. 제목, 버튼 글꼴 수정
+            2. SettingView에서 넘어오는 Line 값이 임의로 설정한 124일 경우, 1호선부터 조회되도록 selectedLine = 0 처리
+ */
 
 import SwiftUI
 
@@ -42,7 +53,7 @@ struct TimeSettingView: View {
                 
                 //title
                 Text(titleName)
-                    .font(.custom("Ownglyph_noocar-Rg", size: 30).bold())
+                    .font(.custom("Tenada", size: 25).bold())
                     .padding(.top, 20)
                 
                 
@@ -110,15 +121,18 @@ struct TimeSettingView: View {
                         alertType = .update
                     }
                 }) // Button
-                .tint(.white)
-                .font(.custom("Ownglyph_noocar-Rg", size: 25))
+                
+                .font(.custom("Tenada", size: 20))
                 .buttonStyle(.bordered)
                 .buttonBorderShape(.capsule)
-                .background(Color("color1"))
+                .background(Color("toolbarColor"))
                 .cornerRadius(30)
                 .controlSize(.large)
+                .foregroundColor(.black)
                 .frame(width: 200, height: 50) // 버튼의 크기 조정
                 .padding(.top, 40)
+                
+//                .tint(.black)
                 .alert(item: $alertType) { alertType in
                     switch alertType {
                     case .add:
@@ -145,12 +159,19 @@ struct TimeSettingView: View {
                 }
             })//VStack
             .onAppear{
-                selectedLine = lineValue
-                selectedStation = filteredStatioins.firstIndex { $0.0 == stationValue } ?? 0
-                selectedTime = timeList.firstIndex { $0 == timeValue } ?? 0
+                // SettingView에서 넘어오는 Line 값이 임의로 설정한 124일 경우, 1호선부터 조회되도록 selectedLine = 0 처리
+                if lineValue == 124 {
+                    selectedLine = 0 // 1호선부터 출력되도록
+                } else {
+                    selectedLine = lineValue - 1 // 0 : 1호선이므로 -1처리해줌
+                    selectedStation = filteredStatioins.firstIndex { $0.0 == stationValue } ?? 0
+                    selectedTime = timeList.firstIndex { $0 == timeValue } ?? 0
+                }
                 
                 print("onAppear lineValue : ", lineValue)
                 print("onAppear selectedLine : ", selectedLine)
+                print("--------------------------------------")
+                print("onAppear stationValue : ", stationValue)
                 print("onAppear selectedStation : ", selectedStation)
             }
     }
