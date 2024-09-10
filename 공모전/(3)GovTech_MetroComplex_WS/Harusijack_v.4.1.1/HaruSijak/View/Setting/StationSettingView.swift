@@ -54,41 +54,39 @@ struct StationSettingView: View {
                     .padding(.top, 20)
                 
                 
-                
                 // ---------------- line picker -------------------
                 HStack {
                     Text("호선 선택 : ")
-                        .font(.custom("Ownglyph_noocar-Rg", size: 20))
+                        .font(.custom("Tenada", size: 20))
                     
                     Picker("", selection: $selectedLine, content: {
                         ForEach(0..<line.count, id:\.self, content: { index in
                             Text("\(line.map{$0}.sorted()[index])호선").tag(index)
-                                .font(.custom("Ownglyph_noocar-Rg", size: 30))
+                                .font(.custom("Tenada", size: 30))
                         })
                     })
                     .pickerStyle(.menu)
                 }
                 .padding(.top, 40)
-//                .onAppear {
-//                    // 초기 값 설정
-//                    selectedStation = filteredStatioins.firstIndex(where: { $0.0 == stationValue }) ?? 0
-//                    selectedLine = lineValue
-//                }
                 
                 
                 // ---------------- station picker -------------------
                 HStack {
                     Text("역 선택 : ")
-                        .font(.custom("Ownglyph_noocar-Rg", size: 20))
+                        .font(.custom("Tenada", size: 20))
                     
                     Picker("", selection: $selectedStation, content: {
                         ForEach(filteredStatioins.indices, id: \.self) { index in
-                            Text(self.filteredStatioins[index].0).tag(index)
+                            Text(self.filteredStatioins[index].0)
+                                .frame(minWidth: 100 ,maxWidth: 200, alignment: .center)
+                                .tag(index)
+                                .font(.custom("Tenada", size: 25))
                         }
                         .pickerStyle(MenuPickerStyle())
                     })
                     .pickerStyle(.menu)
                 }
+                .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.top, 10)
                 
                 

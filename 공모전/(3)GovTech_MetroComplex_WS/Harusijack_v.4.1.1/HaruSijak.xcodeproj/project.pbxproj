@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		540E603F2C8FFA4C007018D6 /* StationSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 540E603E2C8FFA4C007018D6 /* StationSettingView.swift */; };
+		540E60412C9016D5007018D6 /* ShowFullTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 540E60402C9016D5007018D6 /* ShowFullTextView.swift */; };
 		5433378C2C16C781000809D9 /* DateModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5433378B2C16C781000809D9 /* DateModel.swift */; };
 		546496562C18382000B1FF48 /* SettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 546496552C18382000B1FF48 /* SettingView.swift */; };
 		5464965A2C197FCB00B1FF48 /* Time.swift in Sources */ = {isa = PBXBuildFile; fileRef = 546496592C197FCB00B1FF48 /* Time.swift */; };
@@ -37,6 +38,7 @@
 
 /* Begin PBXFileReference section */
 		540E603E2C8FFA4C007018D6 /* StationSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationSettingView.swift; sourceTree = "<group>"; };
+		540E60402C9016D5007018D6 /* ShowFullTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowFullTextView.swift; sourceTree = "<group>"; };
 		5433378B2C16C781000809D9 /* DateModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateModel.swift; sourceTree = "<group>"; };
 		546496552C18382000B1FF48 /* SettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
 		546496592C197FCB00B1FF48 /* Time.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Time.swift; sourceTree = "<group>"; };
@@ -85,6 +87,7 @@
 				546496552C18382000B1FF48 /* SettingView.swift */,
 				5464965D2C1A810400B1FF48 /* TimeSettingView.swift */,
 				540E603E2C8FFA4C007018D6 /* StationSettingView.swift */,
+				540E60402C9016D5007018D6 /* ShowFullTextView.swift */,
 			);
 			path = Setting;
 			sourceTree = "<group>";
@@ -296,6 +299,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FE17E8032C2C006D00ACFCF0 /* SheetContentView.swift in Sources */,
+				540E60412C9016D5007018D6 /* ShowFullTextView.swift in Sources */,
 				A773B5ED2C1C9FC60071D7FF /* LottiView.swift in Sources */,
 				FE17E8012C2C003000ACFCF0 /* PredictView03.swift in Sources */,
 				5433378C2C16C781000809D9 /* DateModel.swift in Sources */,

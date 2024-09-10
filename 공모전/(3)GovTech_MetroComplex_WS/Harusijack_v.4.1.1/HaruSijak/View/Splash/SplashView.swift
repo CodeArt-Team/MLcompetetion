@@ -28,11 +28,10 @@ struct SplashView: View {
                     .frame(width: 400, height: 400)
                 Spacer()
                 
-                Text("언제언잼?")
+                Text("언제 Un-Jam?")
                     .font(.custom("Tenada", size: 30))
                     .foregroundColor(.black)
                     .offset(y: 120)
-        
             }
             
             Spacer()
