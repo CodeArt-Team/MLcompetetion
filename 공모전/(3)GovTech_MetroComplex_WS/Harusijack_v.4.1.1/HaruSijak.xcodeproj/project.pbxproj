@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		540E603F2C8FFA4C007018D6 /* StationSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 540E603E2C8FFA4C007018D6 /* StationSettingView.swift */; };
 		5433378C2C16C781000809D9 /* DateModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5433378B2C16C781000809D9 /* DateModel.swift */; };
 		546496562C18382000B1FF48 /* SettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 546496552C18382000B1FF48 /* SettingView.swift */; };
 		5464965A2C197FCB00B1FF48 /* Time.swift in Sources */ = {isa = PBXBuildFile; fileRef = 546496592C197FCB00B1FF48 /* Time.swift */; };
@@ -35,6 +36,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		540E603E2C8FFA4C007018D6 /* StationSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationSettingView.swift; sourceTree = "<group>"; };
 		5433378B2C16C781000809D9 /* DateModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateModel.swift; sourceTree = "<group>"; };
 		546496552C18382000B1FF48 /* SettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
 		546496592C197FCB00B1FF48 /* Time.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Time.swift; sourceTree = "<group>"; };
@@ -82,6 +84,7 @@
 			children = (
 				546496552C18382000B1FF48 /* SettingView.swift */,
 				5464965D2C1A810400B1FF48 /* TimeSettingView.swift */,
+				540E603E2C8FFA4C007018D6 /* StationSettingView.swift */,
 			);
 			path = Setting;
 			sourceTree = "<group>";
@@ -302,6 +305,7 @@
 				548934FF2C338CC300EEE89A /* ChatView.swift in Sources */,
 				A7CA34682C27E67E00D197B5 /* SubwayList.swift in Sources */,
 				54F80F062C0AF4EE00D83A08 /* HaruSijakApp.swift in Sources */,
+				540E603F2C8FFA4C007018D6 /* StationSettingView.swift in Sources */,
 				5464965E2C1A810400B1FF48 /* TimeSettingView.swift in Sources */,
 				A773B5EE2C1C9FC60071D7FF /* SplashView.swift in Sources */,
 				5464966A2C1A98D900B1FF48 /* Notification.swift in Sources */,
