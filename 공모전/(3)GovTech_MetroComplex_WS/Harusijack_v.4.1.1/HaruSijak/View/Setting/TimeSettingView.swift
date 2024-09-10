@@ -63,7 +63,7 @@ struct TimeSettingView: View {
                 Picker("", selection: $selectedTime, content: {
                     ForEach(0..<timeList.count, id:\.self, content: { index in
                         Text("\(timeList[index])시").tag(index)
-                            .font(.custom("Ownglyph_noocar-Rg", size: 30))
+                            .font(.custom("Tenada", size: 25))
                     })
                 })
                 .pickerStyle(.wheel)
