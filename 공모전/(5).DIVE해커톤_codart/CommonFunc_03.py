@@ -1,12 +1,52 @@
 ## last update : 2024.09.25
 
+## 함수화 
+def char_col_to_label_encode(df, target_col):
+    ##
+    ## 6. 라벨 인코딩 사용
+    explain = """- 범주형 데이터를 숫자로 변환하는 방법중 하나. 
+        - 범주형 데이터는 일반적으로 문자열로 표현됨.
+        - 각 범주를 고유한 정수로 매핑하는 방식으로 동작함. 
+        - '판매중', '예약중', '판매완료', '품절' 네가지 범주일때 0,1,2,3 으로 변환됨
+        - 라벨인코딩은 숫자값의 크기에 의미를 부여하므로 일부 모델에서는 숫자의 상대적인 크기를 잘못 해석 할수있음!
+        - 범주 간에 순서가 있거나 관계를 나타내야하는 경우 원-핫 인코딩을 사용하는 것이 더 나은 성능 향상을 기대할 수있음. 
+        """
+
+    from sklearn.preprocessing import LabelEncoder
+    le = LabelEncoder()
+    le = le.fit(df[target_col])
+    df[target_col] = le.transform(df['Auction_results'])
+    df[target_col].value_counts()
+    print(yellow(explain))
+    return df
 
 
+def char_col_to_one_hot(df, target_col):
+    ## character type 의 칼럼을 one hot 으로 변경하는 함수.
+    from sklearn.preprocessing import OneHotEncoder
+    explain = """- 범주형 데이터를 숫자로 변환하는 방법중 하나. 
+        - 범주형 데이터는 일반적으로 문자열로 표현됨.
+        - 각 범주를 고유한 정수로 매핑하는 방식으로 동작함. 
+        - '판매중', '예약중', '판매완료', '품절' 네가지 범주일때 0,1,2,3 으로 변환됨
+        - 라벨인코딩은 숫자값의 크기에 의미를 부여하므로 일부 모델에서는 숫자의 상대적인 크기를 잘못 해석 할수있음!
+        - 범주 간에 순서가 있거나 관계를 나타내야하는 경우 원-핫 인코딩을 사용하는 것이 더 나은 성능 향상을 기대할 수있음. 
+        """
+    ohe = OneHotEncoder(sparse_output=False) ## one hot 객체 생성
+    ohe.fit(df[[target_col]]) ## Bid class 열에 대해 원핫 인코딩을 학습
+    onehot_data = ohe.transform(df[[target_col]]) ## transform 메서드를 사용하여 데이터를 원핫인코딩이 완료된 ndarray형태로 반환
+    onehot_frame = pd.DataFrame(onehot_data, columns = ohe.categories_[0]) ## df type 으로 변환 
+
+    result = pd.concat([df, onehot_frame], axis = 1) ##원핫 칼럼을 기존 테이블에 병합.
+
+    result = result.drop([target_col], axis=1) ## 일괄과 bid class 를 삭제함. 
+    result.head(3)
+    return result
 
 
 
 ### 데이터 파일이 들어가 있는 곳에 csv , excel 파일 을 찾아서번호를 붙이는 작업
 def data_file_numbering(data_dir = "./Data/NICE평가정보"):
+    ## Update : 만약 이미 번호가 붙어있다면?  그거는 함수 바깥에서 어떻게 든 처리하자. 
     import os ,glob
     for i in os.listdir("./Data/NICE평가정보"):
         print(i)
@@ -378,8 +418,13 @@ class DataPreprocessing(Basic):
                         height*1,
                         '{:.2f}%'.format(target_ratio[i]),
                         ha="center")
-
+            
             plt.show()
+            print(yellow("""
+                         * 어떤 범위에서 어떤 빈도로 분포되어있는지 파악하세요
+                            - x축의 범위:  bin 또는 bucket, 간격이 작으면 많은 bin 필요
+                            - y 축은 bin 에 속한 데이터 수를 나타냄. 
+                         """))
             
 
             feature=train_df.drop(columns=target_col)
@@ -392,8 +437,13 @@ class DataPreprocessing(Basic):
                 plt.title(feature)
                 plt.tight_layout()
                 sns.histplot(x=feature, data = train_df,kde=True,ax=ax1)
-
+            
             plt.show()
+            print(yellow("""
+                         * 어떤 범위에서 어떤 빈도로 분포되어있는지 파악하세요
+                            - x축의 범위:  bin 또는 bucket, 간격이 작으면 많은 bin 필요
+                            - y 축은 bin 에 속한 데이터 수를 나타냄. 
+                         """))
         # df_display_centered(target_ratio)
 
     def quantile_dist_for_binary_output(train, target_col="Outcome"):
